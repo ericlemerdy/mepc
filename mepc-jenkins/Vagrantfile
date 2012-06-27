@@ -8,7 +8,7 @@ Vagrant::Config.run do |config|
 
   # Every Vagrant virtual environment requires a box to build off of.
   config.vm.box = "precise64"
-  config.vm.host_name = "build"
+  config.vm.host_name = "mepc-jenkins"
 
   config.vm.customize [
     "modifyvm", :id,
@@ -31,11 +31,11 @@ Vagrant::Config.run do |config|
   # Assign this VM to a bridged network, allowing you to connect directly to a
   # network using the host's network device. This makes the VM appear as another
   # physical device on your network.
-  # config.vm.network :bridged
+  config.vm.network :bridged
 
   # Forward a port from the guest to the host, which allows for outside
   # computers to access the VM, whereas host only networking does not.
-  config.vm.forward_port 8080, 9080
+  # config.vm.forward_port 8080, 9080
 
   # Share an additional folder to the guest VM. The first argument is
   # an identifier, the second is the path on the guest to mount the
@@ -77,9 +77,7 @@ Vagrant::Config.run do |config|
     chef.add_recipe "git"
   #
   #   # You may also specify custom JSON attributes:
-  #   chef.json = {
-  #     :default_attributes => { :maven => { :version => "3" } }
-  #   }
+  #   chef.json = { :mysql_password => "foo" }
   end
 
   # Enable provisioning with chef server, specifying the chef server URL,
