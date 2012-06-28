@@ -76,6 +76,13 @@ Vagrant::Config.run do |config|
   #
   #   # You may also specify custom JSON attributes:
   #   chef.json = { :mysql_password => "foo" }
+    chef.json = {
+      "varnish" => {
+        "listen_port" => 80,
+        "backend_host" => "mepc-elb",
+        "backend_port" => 8080
+      }
+    }
   end
 
   # Enable provisioning with chef server, specifying the chef server URL,
