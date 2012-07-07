@@ -3,8 +3,7 @@ cookbook_dir = 'cookbooks/'
 task :default => :clean do
   puts 'Downloading required cookbooks...'
   mkdir cookbook_dir
-  cmd = "git clone https://github.com/opscode-cookbooks/varnish.git #{cookbook_dir}"
-  system(cmd)
+  `knife cookbook site install varnish --cookbook-path=#{cookbook_dir}`
 end
 
 task :clean do

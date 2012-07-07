@@ -79,7 +79,7 @@ Vagrant::Config.run do |config|
     chef.json = {
       "varnish" => {
         "listen_port" => 80,
-        "backend_host" => "mepc-elb",
+        "backend_host" => "mepc-jenkins",
         "backend_port" => 8080
       }
     }
