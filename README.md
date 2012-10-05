@@ -1,15 +1,13 @@
 mepc
 ====
 
-Mise En Production Continue
+Mise En Production Continue (Continuous Delivery).
+
+This is a training to be aware of what it happens when you try to continuously deloy a (java) application.
 
 Content
 =======
 
-- mepc-jenkins
+- slides
 
-  The vagrant machine defintion to host the Jenkins continuous build engine. The goal of this machine is to build the project and deploy it.
-
-- mepc-elb
-
-  The vagrant machine defintion to host the Varnish reverse proxy. The goal of this machine is to route requests between production and pre-production environment.
+  Slides of training.
