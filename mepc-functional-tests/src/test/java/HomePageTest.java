@@ -25,9 +25,9 @@ public class HomePageTest {
     }
 
     @Test
-    public void should_display_hello_world_on_home_page() {
+    public void should_display_the_list_of_soldiers_of_fortune() {
 	webTester.beginAt("/");
-	webTester.assertTextPresent("Hello, world!");
+	webTester.assertTextPresent("Soldier Store");
     }
 
 }
