@@ -27,7 +27,7 @@ public class HomePageTest {
     @Test
     public void should_display_the_list_of_soldiers_of_fortune() {
 	webTester.beginAt("/");
-	webTester.assertTextPresent("Soldier Store");
+	webTester.assertTextInElement("brand", "Soldier Store");
     }
 
 }

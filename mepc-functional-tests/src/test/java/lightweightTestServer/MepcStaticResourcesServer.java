@@ -8,7 +8,10 @@ import java.io.IOException;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.sun.jersey.api.container.httpserver.HttpServerFactory;
 import com.sun.jersey.api.core.DefaultResourceConfig;
 import com.sun.net.httpserver.HttpServer;
@@ -20,14 +23,16 @@ public class MepcStaticResourcesServer {
     private HttpServer httpServer;
 
     @GET
-    public File index() {
-	return new File("../static/index.html");
+    public Response index() {
+	return Response.ok(serveStaticFile("index.html"))
+		.type(MediaType.TEXT_HTML).build();
     }
 
     @GET
-    @Path("/{subfolder}")
-    public File index(@PathParam("subfolder") String subFolder) {
-	return new File(format("../static/%s", subFolder));
+    @Path("/{subfolder: .*}")
+    public File serveStaticFile(@PathParam("subfolder") String subFolder) {
+	String pathname = format("../static/%s", subFolder);
+	return new File(pathname);
     }
 
     public void start(int port) throws IllegalArgumentException, IOException {
@@ -39,6 +44,13 @@ public class MepcStaticResourcesServer {
 
     public void stop() {
 	httpServer.stop(0);
+    }
+
+    @VisibleForTesting
+    public static void main(String[] args) throws IllegalArgumentException,
+	    IOException {
+	MepcStaticResourcesServer server = new MepcStaticResourcesServer();
+	server.start(8080);
     }
 
 }
