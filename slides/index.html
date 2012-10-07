@@ -13,69 +13,128 @@
 -->
 
 <html>
-  <head>
-    <title>Mise En Production Continue</title>
-
-    <meta charset='utf-8'>
-    <script
-      src='http://html5slides.googlecode.com/svn/trunk/slides.js'></script>
-  </head>
-  
-  <style>
-    /* Your individual styles here, or just use inline styles if that’s
+<head>
+<title>Mise En Production Continue</title>
+<meta charset='utf-8'>
+<script src='http://html5slides.googlecode.com/svn/trunk/slides.js'></script>
+</head>
+<style>
+/* Your individual styles here, or just use inline styles if that’s
        what you want. */
 .slides.template-valtech > article:not(.nobackground):not(.biglogo) {
-  background: white url(Valtech_Logo_Black_small.png) 750px 625px no-repeat;
-} 
-.slides.template-valtech article.biglogo {
-  background: white url(Valtech_Logo_Black_jpg.png) 50% 50% no-repeat;
+	background: white url('assets/Valtech_Logo_Black_small.png') 750px 625px no-repeat;
 }
-    
-  
+.slides.template-valtech article.biglogo {
+	background: white url('assets/Valtech_Logo_Black_jpg.png') 50% 50% no-repeat;
+}
 </style>
 
-  <body style='display: none'>
+<body style='display: none'>
 
-    <section class='slides layout-regular template-valtech'>
-      
-      <!-- Your slides (<article>s) go here. Delete or comment out the
+	<section class='slides layout-regular template-valtech'>
+
+		<!-- Your slides (<article>s) go here. Delete or comment out the
            slides below. -->
-      
-      <article class='biglogo'>
-      </article>
 
-      <article>
-        <h1>
-          Mise En Production Continue
-        </h1>
-        <h2>
-          (Continuous Deployment)
-        </h2>
-        <p>
-          Eric Le Merdy
-          <br>
-          Pierre Chaussalet
-          <br>
-          2012
-        </p>
-      </article>
+		<article class='biglogo'></article>
 
-      <article>
-        <h3>Exécuter l'application en local</h3>
-        <pre>git clone https://github.com/ericlemerdy/mepc.git</pre>
-        <pre>cd ?</pre>
-        <pre>mvn jetty:run</pre>
-        <p>
-          <a href='http://localhost:8080/' target='_blank'>http://localhost:8080/</a>
-        </p>
-      </article>
+		<article>
+			<h1>Mise En Production Continue</h1>
+			<p>(Continuous Deployment)</p>
+			<div class="author">Eric Le Merdy</div>
+			<div class="author">Pierre Chaussalet</div>
+			<p>2012</p>
+		</article>
 
-      <article>
-        <h3>Approachs to Continuous Deployment</h3>
-        <p>to be continued</p>
-      </article>
-           
-      <!-- Original template content
+		<article>
+			<h3>Execute application locally</h3>
+			<pre>git clone https://github.com/ericlemerdy/mepc.git</pre>
+			<p>
+				<a href='file://{clone_dir}/static/index.html' target='_blank'>file://{clone_dir}/static/index.html</a>
+			</p>
+		</article>
+
+		<article class="">
+			<h3>Approachs to Continuous Deployment</h3>
+			<q>It is always possible to change by making good choices.</q>
+			<div class="author">Kunzang Choden</div>
+			<div class='source'>
+				<a
+					href='http://www.evene.fr/citation/toujours-possible-changer-faisant-bons-choix-78786.php'>Source
+					(fr)</a>
+			</div>
+		</article>
+
+		<article class='fill'>
+			<h3>Production first, quality by roll-back</h3>
+			<p>
+				<img src='assets/cowboy.jpg'>
+			</p>
+			<div class='source white'>Source: 1791675 [RF] &copy;
+				www.visualphotos.com</div>
+		</article>
+
+		<article class='fill'>
+			<h3>Quality first, production as soon as ready</h3>
+			<p>
+				<img src='assets/xp.gif'>
+			</p>
+		</article>
+
+		<article>
+			<h3>Comparison</h3>
+			<table>
+				<tr>
+					<th>Production first, quality by roll-back
+					<th>Quality first, production as soon as ready
+				<tr>
+					<td>
+						<ul>
+							<li class='green'>Minimal cycle time
+							<li class='red'>Business impact of a failure
+							<li class='grey'>Maturity for roll-back efficiency
+							<li class='grey'>Production and quality monitoring
+					<td>
+						<ul>
+							<li class='green'>Functional quality
+							<li class='green'>Minimum Marketable Feature
+			</table>
+		</article>
+
+		<article>
+			<h3>Physical architecture</h3>
+			<p>
+				<img class='centered' src='assets/network.png'>
+			</p>
+		</article>
+
+		<article>
+			<h3>Question :</h3>
+			<h2>How would you make production safe from a material failure, a push that broke the application, a regression in contracts ?</h2>
+		</article>
+		
+		<article>
+			<h3>How to make production safe ?</h3>
+			<table>
+				<tr>
+					<td>Static resources always UP
+					<td>JUnit, graph by Zabbix
+				<tr>
+					<td>Dynamic resources always UP
+					<td>JUnit, graph by Zabbix
+				<tr>
+					<td>Dynamic resources API non-regression
+					<td>JUnit with RestAssured
+				<tr>
+					<td>Dynamic resources functional test
+					<td>Covered
+				<tr>
+					<td>Applicative functional test
+					<td>JUnit with JWebUnit on the application
+			</table>
+		</article>
+
+		<!-- Original template content
       <article>
         <p>
           This is a slide with just text. This is a slide with just text.
@@ -388,7 +447,7 @@
       </article>
       -->
 
-    </section>
+	</section>
 
-  </body>
+</body>
 </html>
