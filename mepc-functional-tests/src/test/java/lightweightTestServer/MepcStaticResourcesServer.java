@@ -17,40 +17,39 @@ import com.sun.jersey.api.core.DefaultResourceConfig;
 import com.sun.net.httpserver.HttpServer;
 
 @Path("/")
-@SuppressWarnings("restriction")
 public class MepcStaticResourcesServer {
 
-    private HttpServer httpServer;
+	private HttpServer httpServer;
 
-    @GET
-    public Response index() {
-	return Response.ok(serveStaticFile("index.html"))
-		.type(MediaType.TEXT_HTML).build();
-    }
+	@GET
+	public Response index() {
+		return Response.ok(serveStaticFile("index.html"))
+				.type(MediaType.TEXT_HTML).build();
+	}
 
-    @GET
-    @Path("/{subfolder: .*}")
-    public File serveStaticFile(@PathParam("subfolder") String subFolder) {
-	String pathname = format("../static/%s", subFolder);
-	return new File(pathname);
-    }
+	@GET
+	@Path("/{subfolder: .*}")
+	public File serveStaticFile(@PathParam("subfolder") String subFolder) {
+		String pathname = format("../static/%s", subFolder);
+		return new File(pathname);
+	}
 
-    public void start(int port) throws IllegalArgumentException, IOException {
-	httpServer = HttpServerFactory.create(
-		format("http://localhost:%d/", port),
-		new DefaultResourceConfig(MepcStaticResourcesServer.class));
-	httpServer.start();
-    }
+	public void start(int port) throws IllegalArgumentException, IOException {
+		httpServer = HttpServerFactory.create(
+				format("http://localhost:%d/", port),
+				new DefaultResourceConfig(MepcStaticResourcesServer.class));
+		httpServer.start();
+	}
 
-    public void stop() {
-	httpServer.stop(0);
-    }
+	public void stop() {
+		httpServer.stop(0);
+	}
 
-    @VisibleForTesting
-    public static void main(String[] args) throws IllegalArgumentException,
-	    IOException {
-	MepcStaticResourcesServer server = new MepcStaticResourcesServer();
-	server.start(8080);
-    }
+	@VisibleForTesting
+	public static void main(String[] args) throws IllegalArgumentException,
+			IOException {
+		MepcStaticResourcesServer server = new MepcStaticResourcesServer();
+		server.start(8080);
+	}
 
 }

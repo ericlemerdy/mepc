@@ -1,0 +1,57 @@
+body {
+	padding-top: 60px;
+}
+
+.photo {
+	background-image: url("../img/EXPENDABLES-2-LINEUP.jpg");
+	height: 100px;
+	width: 82px;
+}
+
+#stallone .photo {
+	background-position: 0 -1px;
+}
+
+#statham .photo {
+	background-position: -84px -1px;
+}
+
+#li .photo {
+	background-position: -168px -1px;
+}
+
+#lundgren .photo {
+	background-position: -252px -1px;
+}
+
+#norris .photo {
+	background-position: -336px -1px;
+}
+
+#crews .photo {
+	background-position: -420px -1px;
+}
+
+#couture .photo {
+	background-position: 0px -163px;
+}
+
+#hemsworth .photo {
+	background-position: -84px -163px;
+}
+
+#van-damme .photo {
+	background-position: -168px -163px;
+}
+
+#willis .photo {
+	background-position: -252px -163px;
+}
+
+#schwarzenegger .photo {
+	background-position: -336px -163px;
+}
+
+#adkins .photo {
+	background-position: -420px -163px;
+}

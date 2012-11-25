@@ -11,23 +11,29 @@ import com.google.inject.Module;
 
 public class HomePageTest {
 
-    @Rule
-    public ServiceRule<MepcStaticResourcesServer> serviceRule = ServiceRule
-	    .startWithRandomPort(MepcStaticResourcesServer.class, (Module) null);
+	@Rule
+	public ServiceRule<MepcStaticResourcesServer> serviceRule = ServiceRule
+			.startWithRandomPort(MepcStaticResourcesServer.class, (Module) null);
 
-    private WebTester webTester;
+	private WebTester webTester;
 
-    @Before
-    public void createWebTester() {
-	webTester = new WebTester();
-	webTester.setBaseUrl(format("http://localhost:%d/",
-		serviceRule.getPort()));
-    }
+	@Before
+	public void createWebTester() {
+		webTester = new WebTester();
+		webTester.setBaseUrl(format("http://localhost:%d/",
+				serviceRule.getPort()));
+	}
 
-    @Test
-    public void should_display_the_list_of_soldiers_of_fortune() {
-	webTester.beginAt("/");
-	webTester.assertTextInElement("brand", "Soldier Store");
-    }
+	@Test
+	public void should_display_the_list_of_soldiers() {
+		webTester.beginAt("/");
+		webTester.assertTextInElement("brand", "Soldier Store");
+	}
+
+	@Test
+	public void should_display_rambo() {
+		webTester.beginAt("/");
+		webTester.assertTextPresent("Sylvester Stallone");
+	}
 
 }
