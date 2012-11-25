@@ -1,453 +1,176 @@
-<!DOCTYPE html>
-
-<!--
-  Google HTML5 slide template
-
-  Authors: Luke Mahé (code)
-           Marcin Wichary (code and design)
-           
-           Dominic Mazzoni (browser compatibility)
-           Charles Chen (ChromeVox support)
-
-  URL: http://code.google.com/p/html5slides/
--->
-
-<html>
+<!doctype html>
+<html lang="en">
 <head>
+<meta charset="utf-8">
 <title>Mise En Production Continue</title>
-<meta charset='utf-8'>
-<script src='http://html5slides.googlecode.com/svn/trunk/slides.js'></script>
-</head>
-<style>
-/* Your individual styles here, or just use inline styles if that’s
-       what you want. */
-.slides.template-valtech > article:not(.nobackground):not(.biglogo) {
-	background: white url('assets/Valtech_Logo_Black_small.png') 750px 625px no-repeat;
-}
-.slides.template-valtech article.biglogo {
-	background: white url('assets/Valtech_Logo_Black_jpg.png') 50% 50% no-repeat;
+<meta name="description" content="Learn to continuously deliver javascript/java web application, safely">
+<meta name="author" content="Eric Le Merdy, Pierre Chaussalet">
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<link rel="stylesheet" href="reveal.js-2.1/css/reveal.css">
+<link rel="stylesheet" href="reveal.js-2.1/css/theme/default.css" id="theme">
+<!-- For syntax highlighting -->
+<link rel="stylesheet" href="reveal.js-2.1/lib/css/zenburn.css">
+<!-- If the query includes 'print-pdf', use the PDF print sheet -->
+<script>
+	document.write('<link rel="stylesheet" href="reveal.js-2.1/css/print/'
+			+ (window.location.search.match(/print-pdf/gi) ? 'pdf' : 'paper')
+			+ '.css" type="text/css" media="print">');
+</script>
+<style type="text/css">
+.whitespirit .reveal .state-background {
+	background: rgba(255, 255, 255, .9);
 }
 </style>
-
-<body style='display: none'>
-
-	<section class='slides layout-regular template-valtech'>
-
-		<!-- Your slides (<article>s) go here. Delete or comment out the
-           slides below. -->
-
-		<article class='biglogo'></article>
-
-		<article>
-			<h1>Mise En Production Continue</h1>
-			<p>(Continuous Deployment)</p>
-			<div class="author">Eric Le Merdy</div>
-			<div class="author">Pierre Chaussalet</div>
-			<p>2012</p>
-		</article>
-
-		<article>
-			<h3>Execute application locally</h3>
-			<pre>git clone https://github.com/ericlemerdy/mepc.git</pre>
-			<p>
-				<a href='file://{clone_dir}/static/index.html' target='_blank'>file://{clone_dir}/static/index.html</a>
-			</p>
-		</article>
-
-		<article class="">
-			<h3>Approachs to Continuous Deployment</h3>
-			<q>It is always possible to change by making good choices.</q>
-			<div class="author">Kunzang Choden</div>
-			<div class='source'>
-				<a
-					href='http://www.evene.fr/citation/toujours-possible-changer-faisant-bons-choix-78786.php'>Source
-					(fr)</a>
-			</div>
-		</article>
-
-		<article class='fill'>
-			<h3>Production first, quality by roll-back</h3>
-			<p>
-				<img src='assets/cowboy.jpg'>
-			</p>
-			<div class='source white'>Source: 1791675 [RF] &copy;
-				www.visualphotos.com</div>
-		</article>
-
-		<article class='fill'>
-			<h3>Quality first, production as soon as ready</h3>
-			<p>
-				<img src='assets/xp.gif'>
-			</p>
-		</article>
-
-		<article>
-			<h3>Comparison</h3>
-			<table>
-				<tr>
-					<th>Production first, quality by roll-back
-					<th>Quality first, production as soon as ready
-				<tr>
-					<td>
-						<ul>
-							<li class='green'>Minimal cycle time
-							<li class='red'>Business impact of a failure
-							<li class='grey'>Maturity for roll-back efficiency
-							<li class='grey'>Production and quality monitoring
-					<td>
-						<ul>
-							<li class='green'>Functional quality
-							<li class='green'>Minimum Marketable Feature
-			</table>
-		</article>
-
-		<article>
-			<h3>Physical architecture</h3>
-			<p>
-				<img class='centered' src='assets/network.png'>
-			</p>
-		</article>
-
-		<article>
-			<h3>Question :</h3>
-			<h2>How would you make production safe from a material failure, a push that broke the application, a regression in contracts ?</h2>
-		</article>
-		
-		<article>
-			<h3>How to make production safe ?</h3>
-			<table>
-				<tr>
-					<td>Static resources always UP
-					<td>JUnit, graph by Zabbix
-				<tr>
-					<td>Dynamic resources always UP
-					<td>JUnit, graph by Zabbix
-				<tr>
-					<td>Dynamic resources API non-regression
-					<td>JUnit with RestAssured
-				<tr>
-					<td>Dynamic resources functional test
-					<td>Covered
-				<tr>
-					<td>Applicative functional test
-					<td>JUnit with JWebUnit on the application
-			</table>
-		</article>
-
-		<!-- Original template content
-      <article>
+</head>
+<body>
+  <div class="reveal">
+    <!-- Any section element inside of this container is displayed as a slide -->
+    <div class="slides">
+      <section data-state="whitespirit">
+        <img src="assets/Valtech_Logo_Black_jpg.png" alt="Valtech logo">
+        <p class="fragment" style="color: black;">presents</p>
+      </section>
+      <section>
+        <h1>M-E-P-C</h1>
+        <h3>Mise En Production Continue</h3>
+        <h3>Continuous Deployment</h3>
         <p>
-          This is a slide with just text. This is a slide with just text.
-          This is a slide with just text. This is a slide with just text.
-          This is a slide with just text. This is a slide with just text.
+          <small><a href="https://twitter.com/ericlemerdy" target="_blank"><img src="http://www.gravatar.com/avatar/77da98419ae312eb0e322a3dac44a734" title="Eric Le Merdy" /></a><a href="https://twitter.com/pchaussalet" target="_blank"><img
+              src="http://www.gravatar.com/avatar/1f2e936f67858671246fd07f4068640e" title="Pierre Chaussalet" /></a></small>
         </p>
-        <p>
-          There is more text just underneath.
-        </p>
-      </article>
-
-      <article>
-        <h3>
-          Simple slide with header and text
-        </h3>
-        <p>
-          This is a slide with just text. This is a slide with just text.
-          This is a slide with just text. This is a slide with just text.
-          This is a slide with just text. This is a slide with just text.
-        </p>
-        <p>
-          There is more text just underneath with a <code>code sample: 5px</code>.
-        </p>
-      </article>
-
-      <article class='smaller'>
-        <h3>
-          Simple slide with header and text (small font)
-        </h3>
-        <p>
-          This is a slide with just text. This is a slide with just text.
-          This is a slide with just text. This is a slide with just text.
-          This is a slide with just text. This is a slide with just text.
-        </p>
-        <p>
-          There is more text just underneath with a <code>code sample: 5px</code>.
-        </p>
-      </article>
-
-      <article>
-        <h3>
-          Slide with bullet points and a longer title, just because we
-          can make it longer
-        </h3>
-        <ul>
-          <li>
-            Use this template to create your presentation
-          </li>
-          <li>
-            Use the provided color palette, box and arrow graphics, and
-            chart styles
-          </li>
-          <li>
-            Instructions are provided to assist you in using this
-            presentation template effectively
-          </li>
-          <li>
-            At all times strive to maintain Google's corporate look and feel
-          </li>
-        </ul>
-      </article>
-
-      <article>
-        <h3>
-          Slide with bullet points that builds
-        </h3>
-        <ul class="build">
-          <li>
-            This is an example of a list
-          </li>
-          <li>
-            The list items fade in
-          </li>
-          <li>
-            Last one!
-          </li>
-        </ul>
-
-        <div class="build">
-          <p>Any element with child nodes can build.</p>
-          <p>It doesn't have to be a list.</p>
-        </div>
-      </article>
-
-      <article class='smaller'>
-        <h3>
-          Slide with bullet points (small font)
-        </h3>
-        <ul>
-          <li>
-            Use this template to create your presentation
-          <li>
-            Use the provided color palette, box and arrow graphics, and
-            chart styles
-          <li>
-            Instructions are provided to assist you in using this
-            presentation template effectively
-          <li>
-            At all times strive to maintain Google's corporate look and feel
-        </ul>
-      </article>
-
-      <article>
-        <h3>
-          Slide with a table
-        </h3>
-        
-        <table>
-          <tr>
-            <th>
-              Name
-            <th>
-              Occupation
-          <tr>
-            <td>
-              Luke Mahé
-            <td>
-              V.P. of Keepin’ It Real
-          <tr>
-            <td>
-              Marcin Wichary
-            <td>
-              The Michael Bay of Doodles
-        </table>
-      </article>
-      
-      <article class='smaller'>
-        <h3>
-          Slide with a table (smaller text)
-        </h3>
-        
-        <table>
-          <tr>
-            <th>
-              Name
-            <th>
-              Occupation
-          <tr>
-            <td>
-              Luke Mahé
-            <td>
-              V.P. of Keepin’ It Real
-          <tr>
-            <td>
-              Marcin Wichary
-            <td>
-              The Michael Bay of Doodles
-        </table>
-      </article>
-      
-      <article>
-        <h3>
-          Styles
-        </h3>
-        <ul>
-          <li>
-            <span class='red'>class="red"</span>
-          <li>
-            <span class='blue'>class="blue"</span>
-          <li>
-            <span class='green'>class="green"</span>
-          <li>
-            <span class='yellow'>class="yellow"</span>
-          <li>
-            <span class='black'>class="black"</span>
-          <li>
-            <span class='white'>class="white"</span>
-          <li>
-            <b>bold</b> and <i>italic</i>
-        </ul>
-      </article>
-      
-      <article>
-        <h2>
-          Segue slide
-        </h2>
-      </article>
-
-      <article>
-        <h3>
-          Slide with an image
-        </h3>
-        <p>
-          <img style='height: 500px' src='images/example-graph.png'>
-        </p>
-        <div class='source'>
-          Source: Sergey Brin
-        </div>
-      </article>
-
-      <article>
-        <h3>
-          Slide with an image (centered)
-        </h3>
-        <p>
-          <img class='centered' style='height: 500px' src='images/example-graph.png'>
-        </p>
-        <div class='source'>
-          Source: Larry Page
-        </div>
-      </article>
-
-      <article class='fill'>
-        <h3>
-          Image filling the slide (with optional header)
-        </h3>
-        <p>
-          <img src='images/example-cat.jpg'>
-        </p>
-        <div class='source white'>
-          Source: Eric Schmidt
-        </div>
-      </article>
-
-      <article>
-        <h3>
-          This slide has some code
-        </h3>
-        <section>
+        <p>2012</p>
+      </section>
+      <section>
+        <h2>Execute application locally</h2>
         <pre>
-&lt;script type='text/javascript'&gt;
-  // Say hello world until the user starts questioning
-  // the meaningfulness of their existence.
-  function helloWorld(world) {
-    for (var i = 42; --i &gt;= 0;) {
-      alert('Hello ' + String(world));
-    }
-  }
-&lt;/script&gt;
-&lt;style&gt;
-  p { color: pink }
-  b { color: blue }
-  u { color: 'umber' }
-&lt;/style&gt;
-</pre>
-        </section>
-      </article>
-      
-      <article class='smaller'>
-        <h3>
-          This slide has some code (small font)
-        </h3>
-        <section>
-        <pre>
-&lt;script type='text/javascript'&gt;
-  // Say hello world until the user starts questioning
-  // the meaningfulness of their existence.
-  function helloWorld(world) {
-    for (var i = 42; --i &gt;= 0;) {
-      alert('Hello ' + String(world));
-    }
-  }
-&lt;/script&gt;
-&lt;style&gt;
-  p { color: pink }
-  b { color: blue }
-  u { color: 'umber' }
-&lt;/style&gt;
-</pre>
-        </section>
-      </article>
-      
-      <article>
-        <q>
-          The best way to predict the future is to invent it.
-        </q>
-        <div class='author'>
-          Alan Kay
-        </div>
-      </article>
-      
-      <article class='smaller'>
-        <q>
-          A distributed system is one in which the failure of a computer 
-          you didn’t even know existed can render your own computer unusable.
-        </q>
-        <div class='author'>
-          Leslie Lamport
-        </div>
-      </article>
-      
-      <article class='nobackground'>
-        <h3>
-          A slide with an embed + title
-        </h3>
-        
-        <iframe src='http://www.google.com/doodle4google/history.html'></iframe>
-      </article>
+          <code class="bash">git clone https://github.com/ericlemerdy/mepc.git</code>
+        </pre>
+        <p>
+          <a href='file://{clone_dir}/static/index.html' target='_blank'>file://{clone_dir}/static/index.html</a>
+        </p>
+      </section>
+      <section>
+        <h2>Approachs to Continuous Deployment</h2>
+        <blockquote>It is always possible to change by making good choices.</blockquote>
+        <p>
+          Kunzang Choden - <a href="http://www.evene.fr/citation/toujours-possible-changer-faisant-bons-choix-78786.php" target="_blank">Source (fr)</a>
+        </p>
+      </section>
+      <section>
+        <h2>Production first, quality by roll-back</h2>
+        <p>
+          <img src="assets/cowboy.jpg" title="Source: 1791675 [RF] &copy; www.visualphotos.com">
+        </p>
+      </section>
+      <section>
+        <h3>Quality first, production as soon as ready</h3>
+        <p>
+          <img src='assets/xp.gif'>
+        </p>
+      </section>
+      <section>
+        <h2>Comparison</h2>
+        <small>
+          <table>
+            <tr>
+              <th>Production first, quality by roll-back
+              <th>Quality first, production as soon as ready
+            <tr>
+              <td>
+                <p class="fragment highlight-green">Minimal cycle time
+                <p class="fragment highlight-red">Business impact of a failure
+                <p>Maturity for roll-back efficiency
+                <p>Production and quality monitoring
+              <td>
+                <p class="fragment highlight-green">Functional quality
+                <p class="fragment highlight-green">Minimum Marketable Feature
+          </table>
+        </small>
+      </section>
+      <section data-state="whitespirit">
+        <h3>Physical architecture</h3>
+        <p>
+          <img class='centered' src='assets/network.png'>
+        </p>
+      </section>
+      <section>
+        <h2>Question :</h2>
+        <blockquote>How would you make production safe from a material failure, a push that broke the application, a regression in contracts ?</blockquote>
+      </section>
+      <section>
+        <h2>How to make production safe ?</h2>
+        <small>
+          <table>
+            <tr>
+              <td><p>Static resources always UP
+              <td><p>JUnit, graph by Zabbix
+            <tr>
+              <td><p>Dynamic resources always UP
+              <td><p>JUnit, graph by Zabbix
+            <tr>
+              <td><p>Dynamic resources API non-regression
+              <td><p>JUnit with RestAssured
+            <tr>
+              <td><p>Dynamic resources functional test
+              <td><p>Covered
+            <tr>
+              <td><p>Applicative functional test
+              <td><p>JUnit with JWebUnit on the application
+          </table>
+        </small>
+      </section>
+    </div>
+  </div>
+  <script src="reveal.js-2.1/lib/js/head.min.js"></script>
+  <script src="reveal.js-2.1/js/reveal.min.js"></script>
+  <script>
+			// Full list of configuration options available here:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls : true,
+				progress : true,
+				history : true,
 
-      <article class='nobackground'>
-        <iframe src='http://www.google.com/doodle4google/history.html'></iframe>
-      </article>
+				theme : Reveal.getQueryHash().theme, // available themes are in /css/theme
+				transition : Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/none
 
-      <article class='fill'>
-        <h3>
-          Full-slide embed with (optional) slide title on top
-        </h3>
-        <iframe src='http://www.google.com/doodle4google/history.html'></iframe>
-      </article>
-      
-      <article>
-        <h3>
-          Thank you!
-        </h3>
-        
-        <ul>
-          <li>
-            <a href='http://www.google.com'>google.com</a>
-        </ul>
-      </article>
-      -->
-
-	</section>
-
+				// Optional libraries used to extend on reveal.js
+				dependencies : [ {
+					src : 'reveal.js-2.1/lib/js/classList.js',
+					condition : function() {
+						return !document.body.classList;
+					}
+				}, {
+					src : 'reveal.js-2.1/plugin/markdown/showdown.js',
+					condition : function() {
+						return !!document.querySelector('[data-markdown]');
+					}
+				}, {
+					src : 'reveal.js-2.1/plugin/markdown/markdown.js',
+					condition : function() {
+						return !!document.querySelector('[data-markdown]');
+					}
+				}, {
+					src : 'reveal.js-2.1/plugin/highlight/highlight.js',
+					async : true,
+					callback : function() {
+						hljs.initHighlightingOnLoad();
+					}
+				}, {
+					src : 'reveal.js-2.1/plugin/zoom-js/zoom.js',
+					async : true,
+					condition : function() {
+						return !!document.body.classList;
+					}
+				}, {
+					src : 'reveal.js-2.1/plugin/notes/notes.js',
+					async : true,
+					condition : function() {
+						return !!document.body.classList;
+					}
+				} ]
+			});
+		</script>
 </body>
 </html>
