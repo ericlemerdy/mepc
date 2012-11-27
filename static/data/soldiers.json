@@ -1,0 +1,77 @@
+{
+    "soldiers" : [
+        {
+            "soldiers" : [
+                {
+                    "id": "stallone",
+                    "name": "Sylvester Stallone",
+                    "description": "Lorem ipsum"
+                },
+                {
+                    "id": "statham",
+                    "name": "Jason Statham",
+                    "description": "Lorem ipsum"
+                },
+                {
+                    "id": "li",
+                    "name": "Jet Li",
+                    "description": "Lorem ipsum"
+                }
+            ]
+        }, {
+            "soldiers" : [
+                {
+                    "id": "lundgren",
+                    "name": "Dolph Lundgren",
+                    "description": "Lorem ipsum"
+                },
+                {
+                    "id": "norris",
+                    "name": "Chuck Norris",
+                    "description": "Lorem ipsum"
+                },
+                {
+                    "id": "crews",
+                    "name": "Terry Crews",
+                    "description": "Lorem ipsum"
+                }
+            ]
+        }, {
+            "soldiers" : [
+                {
+                    "id": "couture",
+                    "name": "Randy Couture",
+                    "description": "Lorem ipsum"
+                },
+                {
+                    "id": "hemsworth",
+                    "name": "Chris Hemsworth",
+                    "description": "Lorem ipsum"
+                },
+                {
+                    "id": "van-damme",
+                    "name": "Jean-Claude Van Damme",
+                    "description": "Lorem ipsum"
+                }
+            ]
+        }, {
+            "soldiers" : [
+                {
+                    "id": "willis",
+                    "name": "Bruce Willis",
+                    "description": "Lorem ipsum"
+                },
+                {
+                    "id": "schwarzenegger",
+                    "name": "Arnold Schwarzenegger",
+                    "description": "Lorem ipsum"
+                },
+                {
+                    "id": "adkins",
+                    "name": "Scott Adkins",
+                    "description": "Lorem ipsum"
+                }
+            ]
+        }
+    ]
+}
