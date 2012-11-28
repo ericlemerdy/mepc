@@ -8,6 +8,7 @@ import java.io.IOException;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -31,6 +32,14 @@ public class MepcStaticResourcesServer {
 	@Path("/{subfolder: .*}")
 	public File serveStaticFile(@PathParam("subfolder") String subFolder) {
 		String pathname = format("../static/%s", subFolder);
+		return new File(pathname);
+	}
+
+	@GET
+	@Path("/{subfolder: .*}.json")
+	@Produces(MediaType.APPLICATION_JSON)
+	public File serveStaticJson(@PathParam("subfolder") String subFolder) {
+		String pathname = format("../static/%s.json", subFolder);
 		return new File(pathname);
 	}
 

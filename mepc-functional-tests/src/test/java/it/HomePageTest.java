@@ -1,3 +1,4 @@
+package it;
 import static java.lang.String.format;
 import lightweightTestServer.MepcStaticResourcesServer;
 import net.gageot.test.rules.ServiceRule;
