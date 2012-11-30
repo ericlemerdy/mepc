@@ -1,6 +1,6 @@
 package it;
+
 import static java.lang.String.format;
-import lightweightTestServer.MepcStaticResourcesServer;
 import net.gageot.test.rules.ServiceRule;
 import net.sourceforge.jwebunit.htmlunit.HtmlUnitTestingEngineImpl;
 import net.sourceforge.jwebunit.junit.WebTester;
@@ -8,6 +8,8 @@ import net.sourceforge.jwebunit.junit.WebTester;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+
+import server.SoldierServer;
 
 import com.gargoylesoftware.htmlunit.AjaxController;
 import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
@@ -17,8 +19,8 @@ import com.google.inject.Module;
 public class HomePageTest {
 
 	@Rule
-	public ServiceRule<MepcStaticResourcesServer> serviceRule = ServiceRule
-			.startWithRandomPort(MepcStaticResourcesServer.class, (Module) null);
+	public ServiceRule<SoldierServer> serviceRule = ServiceRule
+			.startWithRandomPort(SoldierServer.class, (Module) null);
 
 	private WebTester webTester;
 
@@ -33,10 +35,10 @@ public class HomePageTest {
 
 	private void configureSynchronousAjax() {
 		if (webTester.getTestingEngine() instanceof HtmlUnitTestingEngineImpl) {
-			HtmlUnitTestingEngineImpl testingEngine = (HtmlUnitTestingEngineImpl) webTester
+			final HtmlUnitTestingEngineImpl testingEngine = (HtmlUnitTestingEngineImpl) webTester
 					.getTestingEngine();
-			WebClient webClient = testingEngine.getWebClient();
-			AjaxController ajaxController = new NicelyResynchronizingAjaxController();
+			final WebClient webClient = testingEngine.getWebClient();
+			final AjaxController ajaxController = new NicelyResynchronizingAjaxController();
 			webClient.setAjaxController(ajaxController);
 		}
 	}
