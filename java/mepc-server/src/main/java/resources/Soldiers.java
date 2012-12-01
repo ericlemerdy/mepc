@@ -42,13 +42,11 @@ public class Soldiers {
 		return ImmutableMap.<String, List<ThreeSoldiers>> of(
 				"soldiers",
 				newArrayList(
-						new ThreeSoldiers(newArrayList(new Soldier("stallone", "Sylvester Stallone", "Lorem ipsum"), new Soldier("statham", "Jason Statham",
-								"Lorem ipsum"), new Soldier("li", "Jet Li", "Lorem ipsum"))),
-						new ThreeSoldiers(newArrayList(new Soldier("lundgren", "Dolph Lundgren", "Lorem ipsum"), new Soldier("norris", "Chuck Norris",
-								"Lorem ipsum"), new Soldier("crews", "Terry Crews", "Lorem ipsum"))),
-						new ThreeSoldiers(newArrayList(new Soldier("couture", "Randy Couture", "Lorem ipsum"), new Soldier("hemsworth", "Chris Hemsworth",
-								"Lorem ipsum"), new Soldier("van-damme", "Jean-Claude Van Damme", "Lorem ipsum"))),
-						new ThreeSoldiers(newArrayList(new Soldier("willis", "Bruce Willis", "Lorem ipsum"), new Soldier("schwarzenegger",
-								"Arnold Schwarzenegger", "Lorem ipsum"), new Soldier("adkins", "Scott Adkins", "Lorem ipsum")))));
+						new ThreeSoldiers(newArrayList(new Soldier("stallone", "Sylvester Stallone", "This ex-boxer is a vietnâm veteran that really had a rough."), new Soldier("statham", "Jason Statham",
+								"Kickboxing expert, body-to-body, it leaves no chance to your enemies."), new Soldier("li", "Jet Li", "Do not be fooled by its size, this man can send you to the mat quickly thanks to its speed."))),
+						new ThreeSoldiers(newArrayList(new Soldier("lundgren", "Dolph Lundgren", "The Russian soldier has hardened his body to the point it looks like a robot."), new Soldier("norris", "Chuck Norris",
+								"You are not hiring Chuck Norris, this is Chuck Norris that hires you."), new Soldier("van-damme", "Jean-Claude Van Damme", "This warrior philosopher is aware."))),
+						new ThreeSoldiers(newArrayList(new Soldier("willis", "Bruce Willis", "This formidable killer is unstoppable, he learned that the police in New York."), new Soldier("schwarzenegger",
+								"Arnold Schwarzenegger", "When you're born in the Austrian mountains and you carries the milk down to the valley, you are getting stronger... If you hire him, he will be back.")))));
 	}
 }

@@ -13,6 +13,15 @@ body {
 	width: 82px;
 }
 
+.soldier-name {
+	font-size: 24px;
+	line-height: 40px;
+}
+
+.soldier-label {
+	color: gray;
+}
+
 #stallone .photo {
 	background-position: 0 -1px;
 }
@@ -33,18 +42,6 @@ body {
 	background-position: -336px -1px;
 }
 
-#crews .photo {
-	background-position: -420px -1px;
-}
-
-#couture .photo {
-	background-position: 0px -163px;
-}
-
-#hemsworth .photo {
-	background-position: -84px -163px;
-}
-
 #van-damme .photo {
 	background-position: -168px -163px;
 }
@@ -55,8 +52,4 @@ body {
 
 #schwarzenegger .photo {
 	background-position: -336px -163px;
-}
-
-#adkins .photo {
-	background-position: -420px -163px;
 }

@@ -21,9 +21,8 @@ public class DataTest {
 	public void should_get_soldiers() throws Exception {
 		expect().body(
 				"soldiers.soldiers.id",
-				contains(contains((Object) "stallone", "statham", "li"), contains((Object) "lundgren", "norris", "crews"),
-						contains((Object) "couture", "hemsworth", "van-damme"), contains((Object) "willis", "schwarzenegger", "adkins"))).when()
-				.get(format("http://localhost:%d/data/soldiers.json", serviceRule.getPort()));
+				contains(contains((Object) "stallone", "statham", "li"), contains((Object) "lundgren", "norris", "van-damme"),
+						contains((Object) "willis", "schwarzenegger"))).when().get(format("http://localhost:%d/data/soldiers.json", serviceRule.getPort()));
 	}
 
 }
