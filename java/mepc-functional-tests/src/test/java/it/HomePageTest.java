@@ -19,24 +19,21 @@ import com.google.inject.Module;
 public class HomePageTest {
 
 	@Rule
-	public ServiceRule<SoldierServer> serviceRule = ServiceRule
-			.startWithRandomPort(SoldierServer.class, (Module) null);
+	public ServiceRule<SoldierServer> serviceRule = ServiceRule.startWithRandomPort(SoldierServer.class, (Module) null);
 
 	private WebTester webTester;
 
 	@Before
 	public void createWebTester() {
 		webTester = new WebTester();
-		webTester.setBaseUrl(format("http://localhost:%d/",
-				serviceRule.getPort()));
+		webTester.setBaseUrl(format("http://localhost:%d/", serviceRule.getPort()));
 		webTester.beginAt("/");
 		configureSynchronousAjax();
 	}
 
 	private void configureSynchronousAjax() {
 		if (webTester.getTestingEngine() instanceof HtmlUnitTestingEngineImpl) {
-			final HtmlUnitTestingEngineImpl testingEngine = (HtmlUnitTestingEngineImpl) webTester
-					.getTestingEngine();
+			final HtmlUnitTestingEngineImpl testingEngine = (HtmlUnitTestingEngineImpl) webTester.getTestingEngine();
 			final WebClient webClient = testingEngine.getWebClient();
 			final AjaxController ajaxController = new NicelyResynchronizingAjaxController();
 			webClient.setAjaxController(ajaxController);

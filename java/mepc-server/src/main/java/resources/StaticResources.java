@@ -16,14 +16,13 @@ public class StaticResources {
 
 	@GET
 	public Response index() {
-		return Response.ok(serveStaticFile("index.html"))
-				.type(MediaType.TEXT_HTML).build();
+		return Response.ok(serveStaticFile("index.html")).type(MediaType.TEXT_HTML).build();
 	}
 
 	@GET
 	@Path("/{subfolder: .*}")
 	public File serveStaticFile(@PathParam("subfolder") final String subFolder) {
-		final String pathname = format("../static/%s", subFolder);
+		final String pathname = format("../../static/%s", subFolder);
 		return new File(pathname);
 	}
 
@@ -31,7 +30,7 @@ public class StaticResources {
 	@Path("/{subfolder: .*}.json")
 	@Produces(MediaType.APPLICATION_JSON)
 	public File serveStaticJson(@PathParam("subfolder") final String subFolder) {
-		final String pathname = format("../static/%s.json", subFolder);
+		final String pathname = format("../../static/%s.json", subFolder);
 		return new File(pathname);
 	}
 }
