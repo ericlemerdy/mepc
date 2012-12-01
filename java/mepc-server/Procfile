@@ -1,1 +1,0 @@
-web: java -cp target/*:target/lib/* server.SoldierServer

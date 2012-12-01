@@ -1,0 +1,1 @@
+web: java -cp mepc-server/target/*:mepc-server/target/lib/* -Dfr.valtech.staticdir=../static/ server.SoldierServer

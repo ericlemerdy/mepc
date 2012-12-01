@@ -1,5 +1,6 @@
 package resources;
 
+import static com.google.common.base.Objects.firstNonNull;
 import static java.lang.String.format;
 
 import java.io.File;
@@ -13,6 +14,12 @@ import javax.ws.rs.core.Response;
 
 @Path("/")
 public class StaticResources {
+	
+	private String staticDirectory;
+
+	public StaticResources() {
+		this.staticDirectory = firstNonNull(System.getProperty("fr.valtech.staticdir"), "../../static/");
+	}
 
 	@GET
 	public Response index() {
@@ -22,7 +29,7 @@ public class StaticResources {
 	@GET
 	@Path("/{subfolder: .*}")
 	public File serveStaticFile(@PathParam("subfolder") final String subFolder) {
-		final String pathname = format("../../static/%s", subFolder);
+		final String pathname = format("%s/%s", staticDirectory, subFolder);
 		return new File(pathname);
 	}
 
@@ -30,7 +37,7 @@ public class StaticResources {
 	@Path("/{subfolder: .*}.json")
 	@Produces(MediaType.APPLICATION_JSON)
 	public File serveStaticJson(@PathParam("subfolder") final String subFolder) {
-		final String pathname = format("../../static/%s.json", subFolder);
+		final String pathname = format("%s/%s.json", staticDirectory, subFolder);
 		return new File(pathname);
 	}
 }
