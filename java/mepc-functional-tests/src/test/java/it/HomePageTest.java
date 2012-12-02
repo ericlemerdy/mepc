@@ -47,9 +47,15 @@ public class HomePageTest {
 	}
 
 	@Test
-	public void should_display_rambo() {
+	public void should_display_stallone() {
 		webTester.gotoPage("/");
 		webTester.assertTextPresent("Sylvester Stallone");
+	}
+
+	@Test
+	public void should_hire_stallone() {
+		webTester.gotoPage("/");
+		webTester.assertLinkPresent("hire-stallone");
 	}
 
 }
