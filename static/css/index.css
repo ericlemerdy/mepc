@@ -11,7 +11,7 @@ body {
 	background-image: url("../img/EXPENDABLES-2-LINEUP.jpg");
 	height: 100px;
 	width: 82px;
-	margin-bottom: 12px;
+	box-shadow: 1px 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 .soldier-name {
