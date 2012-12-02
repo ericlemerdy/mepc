@@ -1,19 +1,22 @@
 package it;
 
+import static com.google.common.base.Splitter.on;
 import static java.lang.String.format;
+import static org.fest.assertions.Assertions.assertThat;
 import net.gageot.test.rules.ServiceRule;
 import net.sourceforge.jwebunit.htmlunit.HtmlUnitTestingEngineImpl;
 import net.sourceforge.jwebunit.junit.WebTester;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
 import server.SoldierServer;
 
-import com.gargoylesoftware.htmlunit.AjaxController;
 import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
 import com.gargoylesoftware.htmlunit.WebClient;
+import com.google.common.base.Splitter;
 import com.google.inject.Module;
 
 public class HomePageTest {
@@ -35,8 +38,7 @@ public class HomePageTest {
 		if (webTester.getTestingEngine() instanceof HtmlUnitTestingEngineImpl) {
 			final HtmlUnitTestingEngineImpl testingEngine = (HtmlUnitTestingEngineImpl) webTester.getTestingEngine();
 			final WebClient webClient = testingEngine.getWebClient();
-			final AjaxController ajaxController = new NicelyResynchronizingAjaxController();
-			webClient.setAjaxController(ajaxController);
+			webClient.setAjaxController(new NicelyResynchronizingAjaxController());
 		}
 	}
 
@@ -53,9 +55,17 @@ public class HomePageTest {
 	}
 
 	@Test
-	public void should_hire_stallone() {
+	public void when_hire_stallone_should_not_hire_him_again() {
 		webTester.gotoPage("/");
 		webTester.assertLinkPresent("hire-stallone");
+		webTester.clickLink("hire-stallone");
+		webTester.clickButton("btn-dialog-hire-soldier");
+		assertThat(on(' ').split(webTester.getElementById("hire-stallone").getAttribute("class"))).contains("disabled");
 	}
+    
+    @After
+    public void close() {
+    	webTester.closeBrowser();
+    }
 
 }
