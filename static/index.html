@@ -94,18 +94,18 @@
         });
       };
 
-      var unregisterHireDialog = function() {
+      var removeClickListenerFromDialogButton = function() {
         $('#btn-dialog-hire-soldier').off('click');
       };
 
-      var registerHireDialog = function(data) {
+      var addClickListenerToDialogButton = function(data) {
         $('#btn-dialog-hire-soldier').click(function(event) {
           $('#hire-' + data.soldierId).addClass('disabled').off('click');
           $('#hire-soldier-dialog').modal('hide');
         });
       };
 
-      var registerHireButtons = function() {
+      var addClickListenerToSoldierButtons = function() {
         $('.btn-hire-soldier').click(function(event) {
           var template = $('#hire-soldier-modal-body-template').html();
           var data = {
@@ -113,20 +113,20 @@
           };
           var soldierId = Mustache.render(template, data);
           $('#hire-soldier-modal-body').html(soldierId);
-          registerHireDialog(data);
+          addClickListenerToDialogButton(data);
           $('#hire-soldier-dialog').modal();
         });
       };
       
-      var unRegisterHireButtons = function() {
+      var addHiddenListenerToDialog = function() {
         $('#hire-soldier-dialog').on('hidden', function() {
-          unregisterHireDialog();
+          removeClickListenerFromDialogButton();
         });
       }
 
       $(document).ready(function() {
-        unRegisterHireButtons(),
-        addSoldiers().done(registerHireButtons);
+        addHiddenListenerToDialog(),
+        addSoldiers().done(addClickListenerToSoldierButtons);
       });
     </script>
 </body>
