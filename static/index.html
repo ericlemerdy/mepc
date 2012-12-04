@@ -117,14 +117,18 @@
           $('#hire-soldier-dialog').modal();
         });
       };
+      
+      var unRegisterHireButtons = function() {
+        $('#hire-soldier-dialog').on('hidden', function() {
+          unregisterHireDialog();
+        });
+      }
 
       $(document).ready(function() {
-        addSoldiers().success(function() {
-          registerHireButtons();
-          $('#hire-soldier-dialog').on('hidden', function() {
-            unregisterHireDialog();
-          });
-        });
+        addSoldiers().done(
+          registerHireButtons,
+          unRegisterHireButtons
+        );
       });
     </script>
 </body>
