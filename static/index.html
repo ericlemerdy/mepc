@@ -125,10 +125,8 @@
       }
 
       $(document).ready(function() {
-        addSoldiers().done(
-          registerHireButtons,
-          unRegisterHireButtons
-        );
+        unRegisterHireButtons(),
+        addSoldiers().done(registerHireButtons);
       });
     </script>
 </body>
