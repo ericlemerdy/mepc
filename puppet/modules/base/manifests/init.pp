@@ -10,4 +10,8 @@ class base {
     gid => 1100,
   }
 
+  exec {'apt-get update':
+    command => 'apt-get update',
+    refreshonly => true,
+  }
 }
