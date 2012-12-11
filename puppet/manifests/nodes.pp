@@ -9,6 +9,10 @@ node app {
 node cache {
 }
 
+node /(int)?legacy-db/ {
+	include mysql::server
+}
+
 node db {
 }
 
