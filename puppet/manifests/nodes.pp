@@ -1,6 +1,9 @@
 node front {
-  include base
-  include nginx
+	class {'nginx':}
+	nginx::resource::vhost { 'localhost':
+        	ensure   => present,
+        	www_root => '/var/www',
+	}
 }
 
 node app {
@@ -14,6 +17,9 @@ node /(int)?legacy-db/ {
 }
 
 node db {
+	class {'mongodb':
+		enable_10gen => true,
+	}
 }
 
 node monitor {
