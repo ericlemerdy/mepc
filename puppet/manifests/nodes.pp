@@ -15,6 +15,7 @@ node /(int)?front[0-9]{14}/ {
 	exec {'reload nginx':
 		command => '/usr/sbin/service nginx reload',
 		unless => 'sudo netstat -tunelp |grep nginx',
+		require => Exec[rebuild-nginx-vhosts],
 	}
 }
 
