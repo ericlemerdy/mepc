@@ -11,7 +11,6 @@ node /(int)?front[0-9]{14}/ {
 		ensure  => present,
 		owner   => 'www-data',
 		mode    => 755,
-		require => Class['nginx'],
 	}
 }
 
