@@ -4,6 +4,8 @@ node /(int)?front[0-9]{14}/ {
 	nginx::resource::vhost { 'localhost':
         	ensure   => present,
         	www_root => '/var/www',
+		require => File['/var/www'],
+		notify => Service['nginx'],
 	}
 	file {'/var/www':
 		ensure  => present,
