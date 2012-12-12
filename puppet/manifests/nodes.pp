@@ -5,12 +5,16 @@ node /(int)?front[0-9]{14}/ {
         	ensure   => present,
         	www_root => '/var/www',
 		require => File['/var/www'],
-		notify => Service['nginx'],
+		notify => Exec['reload nginx'],
 	}
 	file {'/var/www':
 		ensure  => present,
 		owner   => 'www-data',
 		mode    => 755,
+	}
+	exec {'reload nginx':
+		command => '/usr/sbin/service nginx reload',
+		unless => 'sudo netstat -tunelp |grep nginx',
 	}
 }
 
