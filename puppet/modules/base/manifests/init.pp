@@ -11,7 +11,12 @@ class base {
   }
 
   exec {'apt-get update':
-    command => 'apt-get update',
-    refreshonly => true,
+	command => '/usr/bin/apt-get update',
+	refreshonly => true,
+  }
+
+  package {['curl', 'htop', 'zsh']:
+	ensure => installed,
+	require => Exec['apt-get update'],
   }
 }
