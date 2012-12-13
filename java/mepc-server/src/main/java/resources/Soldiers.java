@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.ws.rs.GET;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
@@ -48,5 +49,11 @@ public class Soldiers {
 								"You are not hiring Chuck Norris, this is Chuck Norris that hires you."), new Soldier("van-damme", "Jean-Claude Van Damme", "This warrior philosopher is aware."))),
 						new ThreeSoldiers(newArrayList(new Soldier("willis", "Bruce Willis", "This formidable killer is unstoppable, he learned that the police in New York."), new Soldier("schwarzenegger",
 								"Arnold Schwarzenegger", "When you're born in the Austrian mountains and you carries the milk down to the valley, you are getting stronger... If you hire him, he will be back.")))));
+	}
+	
+	@PUT
+	@Path("hire/stalonne")
+	public void hireSoldier() {
+		
 	}
 }

@@ -2,9 +2,11 @@ package it;
 
 import static com.jayway.restassured.RestAssured.expect;
 import static java.lang.String.format;
+import static org.apache.http.HttpStatus.SC_NO_CONTENT;
 import static org.hamcrest.Matchers.contains;
 import net.gageot.test.rules.ServiceRule;
 
+import org.apache.http.HttpStatus;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -25,4 +27,8 @@ public class DataTest {
 						contains((Object) "willis", "schwarzenegger"))).when().get(format("http://localhost:%d/data/soldiers.json", serviceRule.getPort()));
 	}
 
+	@Test
+	public void should_hire_soldier() throws Exception {
+		expect().statusCode(SC_NO_CONTENT).when().put(format("http://localhost:%d/data/hire/stalonne", serviceRule.getPort()));
+	}
 }
