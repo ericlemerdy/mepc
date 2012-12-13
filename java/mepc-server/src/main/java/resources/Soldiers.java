@@ -1,6 +1,7 @@
 package resources;
 
 import static com.google.common.collect.Lists.newArrayList;
+import static javax.ws.rs.core.Response.status;
 
 import java.util.List;
 import java.util.Map;
@@ -9,7 +10,10 @@ import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -36,6 +40,8 @@ public class Soldiers {
 		public List<Soldier> soldiers;
 	}
 
+	private static boolean stalonneHired = false;
+
 	@GET
 	@Path("soldiers.json")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -54,6 +60,10 @@ public class Soldiers {
 	@PUT
 	@Path("hire/stalonne")
 	public void hireSoldier() {
-		
+		if (stalonneHired) {
+			Response error = status(Status.FORBIDDEN).entity("Sorry, stalonne is already hired...").build();
+			throw new WebApplicationException(error);
+		}
+		stalonneHired = true;
 	}
 }
