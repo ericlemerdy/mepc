@@ -46,26 +46,32 @@
       <section>
         <h2>Mimic production environment</h2>
         <h3>A data-center on your regular laptop ?</h3>
-        <p>Go virtual :<br />
-VirtualBox, Vagrant, LXC, ...</p>
+        <p>
+          Go virtual :<br /> VirtualBox, Vagrant, LXC, ...
+        </p>
         <h3>Got extra dollars ?</h3>
-        <p>Use the cloud :<br />
-Amazon EC2, ...</p>
+        <p>
+          Use the cloud :<br /> Amazon EC2, ...
+        </p>
       </section>
       <section>
         <h2>Get the stuff</h2>
-        <ul>
-          <li><p>Clone repository</p> <pre>git clone https://github.com/ericlemerdy/mepc.git</pre></li>
-        </ul>
+        <p>Clone repository</p>
+        <pre>
+          <code contenteditable>git clone https://github.com/ericlemerdy/mepc.git</code>
+        </pre>
       </section>
       <section>
         <h2>Execute application locally</h2>
-        <ul>
-          <li><p>Compile</p> <code># sudo apt-get install maven
-mvn clean install -f java/pom.xml</code></li>
-          <li><p>Launch application</p> <pre># sudo gem install foreman
-foreman start -f java/Procfile</pre></li>
-        </ul>
+        <p>Compile</p>
+        <pre>
+          <code contenteditable># sudo apt-get install maven mvn clean install -f java/pom.xml</code>
+        </pre>
+        <p>Launch application</p>
+        <pre>
+          <code contenteditable># sudo gem install foreman
+foreman start -f java/Procfile</code>
+        </pre>
         <p>
           <a href='http://localhost:8080/' target='_blank'>http://localhost:8080/</a>
         </p>
