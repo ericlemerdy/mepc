@@ -22,9 +22,14 @@ public class SoldierServer {
 
 	private HttpServer httpServer;
 
-	public void start(int port) throws IllegalArgumentException, IOException {
-		ResourceConfig resourceConfig = new DefaultResourceConfig(Soldiers.class, StaticResources.class, JacksonJsonProvider.class,
-				JsonParseExceptionMapper.class, JacksonJaxbJsonProvider.class, JsonMappingExceptionMapper.class);
+	public void start(final int port) throws IllegalArgumentException, IOException {
+		final ResourceConfig resourceConfig = new DefaultResourceConfig( //
+				Soldiers.class, //
+				StaticResources.class, //
+				JacksonJsonProvider.class, //
+				JsonParseExceptionMapper.class, //
+				JacksonJaxbJsonProvider.class, //
+				JsonMappingExceptionMapper.class);
 		resourceConfig.setPropertiesAndFeatures(ImmutableMap.<String, Object> of("com.sun.jersey.api.json.POJOMappingFeature", "true"));
 		httpServer = HttpServerFactory.create(format("http://localhost:%d/", port), resourceConfig);
 		httpServer.start();
@@ -34,8 +39,8 @@ public class SoldierServer {
 		httpServer.stop(0);
 	}
 
-	public static void main(String[] args) throws IllegalArgumentException, IOException {
-		SoldierServer server = new SoldierServer();
+	public static void main(final String[] args) throws IllegalArgumentException, IOException {
+		final SoldierServer server = new SoldierServer();
 		server.start(8080);
 	}
 }
