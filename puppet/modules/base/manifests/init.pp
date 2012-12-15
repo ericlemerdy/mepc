@@ -19,4 +19,20 @@ class base {
 	ensure => installed,
 	require => Exec['apt-get update'],
   }
+
+  package {'language-pack-en':
+	ensure => installed,
+	require => Exec['apt-get update'],
+	notify => Exec['update-locale'],
+  }
+
+  file {'/etc/default/locale':
+	ensure => present,
+	content => 'LANG=en-US.UTF-8',
+  }
+
+  exec {'update-locale':
+	refreshonly => true,
+	path => '/usr/sbin',
+  }
 }

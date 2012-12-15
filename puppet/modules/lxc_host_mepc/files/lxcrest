@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+ACTION=$1
+PORT=5000
+
+case $ACTION in
+start)
+	cd /opt/lxcrest
+	. venv/bin/activate
+	./start.sh $PORT &
+	;;
+stop)
+	killall uwsgi
+	;;
+restart)
+	killall uwsgi
+	cd /opt/lxcrest
+	. venv/bin/activate
+	./start.sh $PORT &
+	;;
+*)
+	echo "USAGE: $0 <start|stop|restart>"
+	;;
+esac

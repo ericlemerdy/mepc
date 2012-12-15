@@ -3,12 +3,37 @@ class dashku {
     ensure => installed,
   }
 
-  package {'redis':
+  package {'redis-server':
     ensure => installed,
   }
 
   package {'npm':
-    ensure => installed
+    ensure => installed,
+    require => [Exec['apt-get update'],
+                Exec['add node ppa']],
+  }
+
+  package {'git':
+    ensure => installed,
+  }
+
+  package {'build-essential':
+    ensure => installed,
+  }
+
+  package {'python-software-properties':
+    ensure => installed,
+    notify => Exec['add node ppa'],
+  }
+
+  package {'psmisc':
+    ensure => installed,
+  }
+
+  exec {'add node ppa':
+    command => '/usr/bin/add-apt-repository ppa:chris-lea/node.js',
+    refreshonly => true,
+    notify => Exec['apt-get update'],
   }
 
   exec {'clone dashku':
@@ -16,8 +41,9 @@ class dashku {
     cwd => '/opt',
     creates => '/opt/dashku',
     require => [Package['mongodb'],
-                Package['redis'],
-                Package['nmp']],
+                Package['redis-server'],
+                Package['npm'],
+		Package['git']],
     notify => Exec['dashku install'],
   }
 
@@ -25,7 +51,7 @@ class dashku {
     command => 'npm install',
     cwd => '/opt/dashku',
     refreshonly => true,
-    require => Exec['clone daskhu'],
+    require => Exec['clone dashku'],
   }
 
   file {'/opt/dashku/installed':
@@ -36,10 +62,11 @@ class dashku {
   service {'dashku':
     provider => base,
     ensure => running,
-    start => '/opt/dashku/node_modules/.bin/coffee app.coffee',
+    start => 'cd /opt/dashku && ./node_modules/.bin/coffee app.coffee &',
     stop => 'killall coffee',
-    restart => 'killall coffee && /opt/dashku/node_modules/.bin/coffee app.coffee',
+    restart => 'killall coffee && cd /opt/dashku && ./node_modules/.bin/coffee app.coffee &',
     status => 'ps ax |grep coffee |grep -v grep',
-    require => File['/opt/dashku/installed'],
+    require => [File['/opt/dashku/installed'],
+		Package['psmisc']],
   }
 }

@@ -21,6 +21,19 @@ node /(int)?front[0-9]{14}/ {
 
 node /(int)?app[0-9]{14}/ {
 	include base
+	package {'openjdk-7-jre':
+		ensure => installed,
+	}
+
+# Foreman part
+	package {'rubygems':
+		ensure => installed,
+	}
+	package {'foreman':
+		ensure => installed,
+		provider => 'gem',
+		require => Package['rubygems'],
+	}
 }
 
 node /(int)?legacy-db[0-9]{14}/ {
@@ -40,9 +53,15 @@ node cache {
 
 node monitor {
 	include base
+	include dashku
 }
 
 node puppet {
 	include base
 	include puppet_mepc
+}
+
+node lxc-host {
+	include base
+	include lxc_host_mepc
 }
