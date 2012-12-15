@@ -15,7 +15,6 @@
   </properties>
   <modules>
     <module>mepc-server</module>
-    <module>mepc-functional-tests</module>
   </modules>
   <dependencyManagement>
     <dependencies>
