@@ -13,9 +13,10 @@
 <link rel="stylesheet" href="reveal.js-519ee2680/lib/css/zenburn.css">
 <!-- If the query includes 'print-pdf', use the PDF print sheet -->
 <script>
-  document.write('<link rel="stylesheet" href="reveal.js-519ee2680/css/print/'
-      + (window.location.search.match(/print-pdf/gi) ? 'pdf' : 'paper')
-      + '.css" type="text/css" media="print">');
+	document
+			.write('<link rel="stylesheet" href="reveal.js-519ee2680/css/print/'
+					+ (window.location.search.match(/print-pdf/gi) ? 'pdf'
+							: 'paper') + '.css" type="text/css" media="print">');
 </script>
 <style type="text/css">
 .whitespirit .reveal .state-background {
@@ -36,23 +37,34 @@
         <h3>Mise En Production Continue</h3>
         <h3>Continuous Deployment</h3>
         <p>
-          <small><a href="https://twitter.com/ericlemerdy" target="_blank"><img
-              src="http://www.gravatar.com/avatar/77da98419ae312eb0e322a3dac44a734" title="Eric Le Merdy" /></a><a
-            href="https://twitter.com/pchaussalet" target="_blank"><img
-              src="http://www.gravatar.com/avatar/1f2e936f67858671246fd07f4068640e" title="Pierre Chaussalet" /></a></small>
+          <a href="https://twitter.com/ericlemerdy" target="_blank"><img src="http://www.gravatar.com/avatar/77da98419ae312eb0e322a3dac44a734" title="Eric Le Merdy"></a> <a href="https://twitter.com/pchaussalet"
+            target="_blank"><img src="http://www.gravatar.com/avatar/1f2e936f67858671246fd07f4068640e" title="Pierre Chaussalet" /></a>
         </p>
         <p>2012</p>
       </section>
       <section>
-        <h2>Mimic production environment</h2>
-        <h3>A data-center on your regular laptop ?</h3>
+        <h2>The application</h2>
+        <p><a href="http://X.X.X.X/">http://X.X.X.X/</a></p>
+      </section>
+      <section>
+        <h2>The dashboard</h2>
+        <p><a href="http://X.X.X.X/">http://X.X.X.X/</a></p>
+        <p><small>Powered by <a href="https://dashku.com/">dashku</a></small><p>
+      </section>
+      <section>
+        <h2>Let's deploy</h2>
+        <p><blockquote>This is the first time, as usual.</blockquote></p>
+      </section>
+      <section>
+        <h2>The application</h2>
+        <p><a href="http://X.X.X.X/">http://X.X.X.X/</a></p>
+      </section>
+      <section>
+        <h2>What does it looks like ?</h2>
         <p>
-          Go virtual :<br /> VirtualBox, Vagrant, LXC, ...
+          <img class='centered' src='assets/network.png'>
         </p>
-        <h3>Got extra dollars ?</h3>
-        <p>
-          Use the cloud :<br /> Amazon EC2, ...
-        </p>
+        <p></p>
       </section>
       <section>
         <h2>Get the stuff</h2>
@@ -77,11 +89,29 @@ foreman start -f java/Procfile</code>
         </p>
       </section>
       <section>
+      <h2>Now it's your turn</h2>
+      <p>Develop a feature...</p>
+      <p>...and push !</p>
+      </section>
+      <section>
+        <h1>B.A.C.K.U.P</h1>
+      </section>
+      <section>
+        <h2>Mimic production environment</h2>
+        <h3>A data-center on your regular laptop ?</h3>
+        <p>
+          Go virtual :<br /> VirtualBox, Vagrant, LXC, ...
+        </p>
+        <h3>Got extra dollars ?</h3>
+        <p>
+          Use the cloud :<br /> Amazon EC2, ...
+        </p>
+      </section>
+      <section>
         <h2>Approaches to Continuous Deployment</h2>
         <blockquote>It is always possible to change by making good choices.</blockquote>
         <p>
-          Kunzang Choden - <a href="http://www.evene.fr/citation/toujours-possible-changer-faisant-bons-choix-78786.php"
-            target="_blank">Source (fr)</a>
+          Kunzang Choden - <a href="http://www.evene.fr/citation/toujours-possible-changer-faisant-bons-choix-78786.php" target="_blank">Source (fr)</a>
         </p>
       </section>
       <section>
@@ -123,8 +153,7 @@ foreman start -f java/Procfile</code>
       </section>
       <section>
         <h2>Question :</h2>
-        <blockquote>How would you make production safe from a material failure, a push that broke the
-          application, a regression in contracts ?</blockquote>
+        <blockquote>How would you make production safe from a material failure, a push that broke the application, a regression in contracts ?</blockquote>
       </section>
       <section>
         <h2>How to make production safe ?</h2>
@@ -153,53 +182,53 @@ foreman start -f java/Procfile</code>
   <script src="reveal.js-519ee2680/lib/js/head.min.js"></script>
   <script src="reveal.js-519ee2680/js/reveal.min.js"></script>
   <script>
-      // Full list of configuration options available here:
-      // https://github.com/hakimel/reveal.js#configuration
-      Reveal.initialize({
-        controls : true,
-        progress : true,
-        history : true,
-		center: true,
+			// Full list of configuration options available here:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls : true,
+				progress : true,
+				history : true,
+				center : true,
 
-        theme : Reveal.getQueryHash().theme, // available themes are in /css/theme
-        transition : Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/none
+				theme : Reveal.getQueryHash().theme, // available themes are in /css/theme
+				transition : Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/none
 
-        // Optional libraries used to extend on reveal.js
-        dependencies : [ {
-          src : 'reveal.js-519ee2680/lib/js/classList.js',
-          condition : function() {
-            return !document.body.classList;
-          }
-        }, {
-          src : 'reveal.js-519ee2680/plugin/markdown/showdown.js',
-          condition : function() {
-            return !!document.querySelector('[data-markdown]');
-          }
-        }, {
-          src : 'reveal.js-519ee2680/plugin/markdown/markdown.js',
-          condition : function() {
-            return !!document.querySelector('[data-markdown]');
-          }
-        }, {
-          src : 'reveal.js-519ee2680/plugin/highlight/highlight.js',
-          async : true,
-          callback : function() {
-            hljs.initHighlightingOnLoad();
-          }
-        }, {
-          src : 'reveal.js-519ee2680/plugin/zoom-js/zoom.js',
-          async : true,
-          condition : function() {
-            return !!document.body.classList;
-          }
-        }, {
-          src : 'reveal.js-519ee2680/plugin/notes/notes.js',
-          async : true,
-          condition : function() {
-            return !!document.body.classList;
-          }
-        } ]
-      });
-    </script>
+				// Optional libraries used to extend on reveal.js
+				dependencies : [ {
+					src : 'reveal.js-519ee2680/lib/js/classList.js',
+					condition : function() {
+						return !document.body.classList;
+					}
+				}, {
+					src : 'reveal.js-519ee2680/plugin/markdown/showdown.js',
+					condition : function() {
+						return !!document.querySelector('[data-markdown]');
+					}
+				}, {
+					src : 'reveal.js-519ee2680/plugin/markdown/markdown.js',
+					condition : function() {
+						return !!document.querySelector('[data-markdown]');
+					}
+				}, {
+					src : 'reveal.js-519ee2680/plugin/highlight/highlight.js',
+					async : true,
+					callback : function() {
+						hljs.initHighlightingOnLoad();
+					}
+				}, {
+					src : 'reveal.js-519ee2680/plugin/zoom-js/zoom.js',
+					async : true,
+					condition : function() {
+						return !!document.body.classList;
+					}
+				}, {
+					src : 'reveal.js-519ee2680/plugin/notes/notes.js',
+					async : true,
+					condition : function() {
+						return !!document.body.classList;
+					}
+				} ]
+			});
+		</script>
 </body>
 </html>
