@@ -42,7 +42,7 @@ public class HomePageTest {
 		webTester = new WebTester();
 		webTester.setBaseUrl(format("http://localhost:%d/", frontRule.getPort()));
 		webTester.beginAt("/");
-		configureSynchronousAjax();
+		getWebClient().setAjaxController(new NicelyResynchronizingAjaxController());
 	}
 
 	private WebClient getWebClient() {
@@ -51,10 +51,6 @@ public class HomePageTest {
 			return testingEngine.getWebClient();
 		}
 		return null;
-	}
-
-	private void configureSynchronousAjax() {
-		getWebClient().setAjaxController(new NicelyResynchronizingAjaxController());
 	}
 
 	@Test
