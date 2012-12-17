@@ -80,25 +80,33 @@
   <script src="lib/bootstrap-2.2.1/js/bootstrap.min.js"></script>
   <script src="lib/mustache.js-0.7.0/mustache.min.js"></script>
   <script>
-      var addSoldiers = function() {
-        return $.getJSON('data/soldiers.json', function(data) {
-          var soldiersTemplate = $('#soldiers-template').html();
-          var soldiersHtml = Mustache.render(soldiersTemplate, data);
-          $('#soldiers-container').html(soldiersHtml);
-        });
+      var dataHost = '';
+      
+      var retrieveConfiguration = function() {
+        return $.getJSON('/conf.js', function(data) {
+    	  dataHost = data.dataHost;
+    	});
       };
+        
+      var addSoldiers = function() {
+          return $.getJSON('http://' + dataHost + '/data/soldiers.jsonp?callback=?', function(data) {
+            var soldiersTemplate = $('#soldiers-template').html();
+            var soldiersHtml = Mustache.render(soldiersTemplate, data);
+            $('#soldiers-container').html(soldiersHtml);
+          });
+        };
 
       var removeClickListenerFromDialogButton = function() {
-        $('#btn-dialog-hire-soldier').off('click');
-      };
-
+          $('#btn-dialog-hire-soldier').off('click');
+        };
+  
       var addClickListenerToDialogButton = function(data) {
-        $('#btn-dialog-hire-soldier').click(function(event) {
-          $('#hire-' + data.soldierId).addClass('disabled').off('click');
-          $('#hire-soldier-dialog').modal('hide');
-        });
-      };
-
+          $('#btn-dialog-hire-soldier').click(function(event) {
+            $('#hire-' + data.soldierId).addClass('disabled').off('click');
+            $('#hire-soldier-dialog').modal('hide');
+          });
+        };
+  
       var addClickListenerToSoldierButtons = function() {
         $('.btn-hire-soldier').click(function(event) {
           var template = $('#hire-soldier-modal-body-template').html();
@@ -108,19 +116,21 @@
           var soldierId = Mustache.render(template, data);
           $('#hire-soldier-modal-body').html(soldierId);
           addClickListenerToDialogButton(data);
-          $('#hire-soldier-dialog').modal();
-        });
-      };
-
+            $('#hire-soldier-dialog').modal();
+          });
+        };
+  
       var addHiddenListenerToDialog = function() {
         $('#hire-soldier-dialog').on('hidden', function() {
           removeClickListenerFromDialogButton();
         });
-      }
+      };
 
       $(document).ready(function() {
         addHiddenListenerToDialog();
-        addSoldiers().done(addClickListenerToSoldierButtons);
+        retrieveConfiguration().done(function() {
+          addSoldiers().done(addClickListenerToSoldierButtons);
+        });
       });
     </script>
 </body>

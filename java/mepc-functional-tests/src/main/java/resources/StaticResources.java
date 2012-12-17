@@ -12,12 +12,18 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
+
 @Path("/")
 public class StaticResources {
-	
-	private String staticDirectory;
 
-	public StaticResources() {
+	private final String staticDirectory;
+	private final String dataHost;
+
+	@Inject
+	public StaticResources(@Named("dataHost") final String dataHost) {
+		this.dataHost = dataHost;
 		this.staticDirectory = firstNonNull(System.getProperty("fr.valtech.staticdir"), "../../static/");
 	}
 
@@ -39,5 +45,12 @@ public class StaticResources {
 	public File serveStaticJson(@PathParam("subfolder") final String subFolder) {
 		final String pathname = format("%s/%s.json", staticDirectory, subFolder);
 		return new File(pathname);
+	}
+
+	@GET
+	@Path("/conf.js")
+	@Produces(MediaType.APPLICATION_JSON)
+	public String serveConfiguration(@PathParam("subfolder") final String subFolder) {
+		return format("{\"dataHost\":\"%s\"}", dataHost);
 	}
 }

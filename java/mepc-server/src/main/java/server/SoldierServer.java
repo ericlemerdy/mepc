@@ -10,7 +10,6 @@ import org.codehaus.jackson.jaxrs.JsonMappingExceptionMapper;
 import org.codehaus.jackson.jaxrs.JsonParseExceptionMapper;
 
 import resources.Soldiers;
-import resources.StaticResources;
 
 import com.google.common.collect.ImmutableMap;
 import com.sun.jersey.api.container.httpserver.HttpServerFactory;
@@ -25,7 +24,6 @@ public class SoldierServer {
 	public void start(final int port) throws IllegalArgumentException, IOException {
 		final ResourceConfig resourceConfig = new DefaultResourceConfig( //
 				Soldiers.class, //
-				StaticResources.class, //
 				JacksonJsonProvider.class, //
 				JsonParseExceptionMapper.class, //
 				JacksonJaxbJsonProvider.class, //
@@ -41,6 +39,6 @@ public class SoldierServer {
 
 	public static void main(final String[] args) throws IllegalArgumentException, IOException {
 		final SoldierServer server = new SoldierServer();
-		server.start(8080);
+		server.start(8081);
 	}
 }
