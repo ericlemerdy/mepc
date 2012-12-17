@@ -1,5 +1,6 @@
 package server;
 
+import static com.google.common.base.Objects.firstNonNull;
 import static com.google.inject.name.Names.named;
 import static com.google.inject.util.Modules.override;
 import static com.sun.jersey.api.container.httpserver.HttpServerFactory.create;
@@ -27,6 +28,8 @@ public class FrontServer {
 			@Override
 			protected void configure() {
 				bind(String.class).annotatedWith(named("dataHost")).toInstance("localhost:8081");
+				bind(String.class).annotatedWith(named("frontDir")).toInstance(
+						firstNonNull(System.getProperty("fr.valtech.frontdir"), "../../front/"));
 			}
 		}).with(modules));
 	}

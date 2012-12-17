@@ -1,6 +1,5 @@
 package resources;
 
-import static com.google.common.base.Objects.firstNonNull;
 import static java.lang.String.format;
 
 import java.io.File;
@@ -22,9 +21,9 @@ public class FrontResources {
 	private final String dataHost;
 
 	@Inject
-	public FrontResources(@Named("dataHost") final String dataHost) {
+	public FrontResources(@Named("dataHost") final String dataHost, @Named("frontDir") final String frontDirectory) {
 		this.dataHost = dataHost;
-		this.frontDirectory = firstNonNull(System.getProperty("fr.valtech.frontdir"), "../../front/");
+		this.frontDirectory = frontDirectory;
 	}
 
 	@GET
