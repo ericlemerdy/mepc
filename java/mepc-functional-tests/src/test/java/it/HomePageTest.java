@@ -16,7 +16,7 @@ import org.junit.rules.RuleChain;
 import org.junit.rules.TestRule;
 
 import server.SoldierServer;
-import server.StaticServer;
+import server.FrontServer;
 
 import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
 import com.gargoylesoftware.htmlunit.WebClient;
@@ -26,21 +26,21 @@ import com.google.inject.Module;
 public class HomePageTest {
 
 	public ServiceRule<SoldierServer> soldierRule = ServiceRule.startWithRandomPort(SoldierServer.class, (Module) null);
-	public ServiceRule<StaticServer> staticRule = ServiceRule.startWithRandomPort(StaticServer.class, new AbstractModule() {
+	public ServiceRule<FrontServer> frontRule = ServiceRule.startWithRandomPort(FrontServer.class, new AbstractModule() {
 		@Override
 		protected void configure() {
 			bind(String.class).annotatedWith(named("dataHost")).toInstance(format("localhost:%d", soldierRule.getPort()));
 		}
 	});
 	@Rule
-	public TestRule bothServers = RuleChain.outerRule(soldierRule).around(staticRule);
+	public TestRule bothServers = RuleChain.outerRule(soldierRule).around(frontRule);
 
 	private WebTester webTester;
 
 	@Before
 	public void createWebTester() {
 		webTester = new WebTester();
-		webTester.setBaseUrl(format("http://localhost:%d/", staticRule.getPort()));
+		webTester.setBaseUrl(format("http://localhost:%d/", frontRule.getPort()));
 		webTester.beginAt("/");
 		configureSynchronousAjax();
 	}

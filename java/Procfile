@@ -1,2 +1,2 @@
 app: java -cp mepc-server/target/*:mepc-server/target/lib/* server.SoldierServer
-static: java -cp mepc-functional-tests/target/*:mepc-functional-tests/target/lib/* -Dfr.valtech.staticdir=../static/ server.StaticServer 
+front: java -cp mepc-functional-tests/target/*:mepc-functional-tests/target/lib/* -Dfr.valtech.frontdir=../front/ server.FrontServer 

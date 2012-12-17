@@ -16,34 +16,34 @@ import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
 @Path("/")
-public class StaticResources {
+public class FrontResources {
 
-	private final String staticDirectory;
+	private final String frontDirectory;
 	private final String dataHost;
 
 	@Inject
-	public StaticResources(@Named("dataHost") final String dataHost) {
+	public FrontResources(@Named("dataHost") final String dataHost) {
 		this.dataHost = dataHost;
-		this.staticDirectory = firstNonNull(System.getProperty("fr.valtech.staticdir"), "../../static/");
+		this.frontDirectory = firstNonNull(System.getProperty("fr.valtech.frontdir"), "../../front/");
 	}
 
 	@GET
 	public Response index() {
-		return Response.ok(serveStaticFile("index.html")).type(MediaType.TEXT_HTML).build();
+		return Response.ok(serveFrontFile("index.html")).type(MediaType.TEXT_HTML).build();
 	}
 
 	@GET
 	@Path("/{subfolder: .*}")
-	public File serveStaticFile(@PathParam("subfolder") final String subFolder) {
-		final String pathname = format("%s/%s", staticDirectory, subFolder);
+	public File serveFrontFile(@PathParam("subfolder") final String subFolder) {
+		final String pathname = format("%s/%s", frontDirectory, subFolder);
 		return new File(pathname);
 	}
 
 	@GET
 	@Path("/{subfolder: .*}.json")
 	@Produces(MediaType.APPLICATION_JSON)
-	public File serveStaticJson(@PathParam("subfolder") final String subFolder) {
-		final String pathname = format("%s/%s.json", staticDirectory, subFolder);
+	public File serveFrontJson(@PathParam("subfolder") final String subFolder) {
+		final String pathname = format("%s/%s.json", frontDirectory, subFolder);
 		return new File(pathname);
 	}
 
