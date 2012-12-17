@@ -1,0 +1,70 @@
+#!/bin/sh
+
+LOCATION=$(pwd)
+REMOTE=${1:-origin}
+REMOTE_URL=$(git remote show -n ${REMOTE} | awk '/Fetch/ {print $3}')
+BRANCH=$(git symbolic-ref -q HEAD)
+BRANCH=${BRANCH##refs/heads/}
+
+GIT_DIR="$(git rev-parse --git-dir 2>/dev/null)"
+REPO_DIR=$(readlink -m $GIT_DIR/..)
+REPO_NAME=${REPO_DIR##*/}
+BUILD_DIR=/tmp/git-private-build/${REPO_NAME}
+
+rollback_wip() {
+  git log -n 1 | grep -q -c "WIP" && git reset HEAD~1
+}
+
+alert_user() {
+  echo "$1"
+  which notify-send >> /dev/null && notify-send -i /usr/share/pixmaps/apple-$2.png "Git build" "$1"
+}
+
+exit_ko() {
+  alert_user "$1" "red"; exit 1
+}
+
+exit_ok() {
+  alert_user "$1" "green"; exit 0
+}
+
+# Get command for build from Git config
+# TODO check that it was configured
+#git config private-build.command "mvn install"
+#git config --remove-section private-build
+COMMAND=$(git config --get private-build.command)
+
+# Commit "work in progress"
+git fetch ${REMOTE}
+git add -A $REPO_DIR && git commit -m "WIP"
+REBASE="$REMOTE/$BRANCH"
+git branch -r | grep -q -c ${REBASE} || REBASE="$REMOTE/master"
+echo "rebase ${REBASE}"
+git rebase ${REBASE}
+if [ "$?" -ne 0 ]; then
+  git rebase --abort
+  rollback_wip
+  exit_ko "Unable to rebase!"
+fi
+rollback_wip
+
+# Private clone
+rm -Rf ${BUILD_DIR}
+git clone --local --shared --branch "${BRANCH}" ${REPO_DIR} ${BUILD_DIR}
+
+# Private build
+cd ${BUILD_DIR}
+eval ${COMMAND}
+if [ $? -ne 0 ]; then
+  exit_ko "Unable to build!"
+fi
+
+# Push
+git push ${REMOTE_URL} ${BRANCH}
+if [ $? -ne 0 ]; then
+  exit_ko "Unable to push"
+fi
+
+# Update working directory
+cd ${LOCATION} && git fetch ${REMOTE}
+exit_ok "Yet another successful build!"

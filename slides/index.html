@@ -105,6 +105,14 @@ foreman start -f java/Procfile</code>
         <p>...and push !</p>
       </section>
       <section>
+        <h2>How to push ?</h2>
+        <p>Use etc/git-build</p>
+        <pre><code contenteditable># The first time:
+# git config private-build.command "mvn clean install -f java/pom.xml && mvn clean install -f java/mepc-functional-tests/pom.xml"
+git build</code></pre>
+        <ul><li>Creates a local clone, build there and push.</li><li>Does not trouble your for next developement.</li></ul>
+      </section>
+      <section>
         <h1>B.A.C.K.U.P</h1>
       </section>
       <section>
