@@ -1,5 +1,6 @@
 package resource;
 
+import static java.lang.Boolean.FALSE;
 import static org.fest.assertions.Assertions.assertThat;
 
 import java.util.List;
@@ -7,9 +8,9 @@ import java.util.Map;
 
 import org.junit.Test;
 
+import resources.Soldier;
 import resources.Soldiers;
-import resources.Soldiers.Soldier;
-import resources.Soldiers.ThreeSoldiers;
+import resources.ThreeSoldiers;
 
 public class SoldiersTest {
 
@@ -25,5 +26,17 @@ public class SoldiersTest {
 		final List<Soldier> firstThreeSoldiers = list.get(0).getSoldiers();
 		assertThat(firstThreeSoldiers).hasSize(3);
 		assertThat(firstThreeSoldiers).onProperty("name").containsExactly("Sylvester Stallone", "Jason Statham", "Jet Li");
+		assertThat(firstThreeSoldiers).onProperty("hired").containsExactly(FALSE, FALSE, FALSE);
+	}
+
+	@Test
+	public void should_hire_stalone() {
+		final Soldiers soldierResources = new Soldiers();
+		soldierResources.hireSoldier();
+
+		final List<Soldier> firstThreeSoldiers = soldierResources.allSoldiers().get("soldiers").get(0).getSoldiers();
+
+		assertThat(firstThreeSoldiers.get(0).getName()).isEqualTo("Sylvester Stallone");
+		assertThat(firstThreeSoldiers.get(0).getHired()).isTrue();
 	}
 }
