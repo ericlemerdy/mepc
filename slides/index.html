@@ -101,6 +101,25 @@ foreman start -f java/Procfile</code>
         </p>
       </section>
       <section>
+        <h2>The push process</h2>
+        <p>lxc-host is the chef</p>
+        <ul>
+          <li>cron looking for git changes</li>
+          <li>build artifacts</li>
+          <li>deploy on integration
+            <ul>
+              <li>create integration</li>
+              <li>start integration</li>
+              <li>install dependencies and deploy artifacts</li>
+              <li>validate integration</li>
+              <li>destroy integration</li>
+            </ul>
+          </li>
+          <li>deploy on blue | green</li>
+          <li>swich blue | green</li>
+        </ul>
+      </section>
+      <section>
         <h2>Now it's your turn</h2>
         <p>Develop a feature...</p>
         <p>...and push !</p>
