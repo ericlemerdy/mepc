@@ -1,2 +1,4 @@
 .project
 front.tar.gz
+java/bin
+java/mepc-functional-tests/bin
