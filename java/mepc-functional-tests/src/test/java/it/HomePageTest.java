@@ -1,9 +1,7 @@
 package it;
 
-import static com.google.common.base.Splitter.on;
 import static com.google.inject.name.Names.named;
 import static java.lang.String.format;
-import static org.fest.assertions.Assertions.assertThat;
 import net.gageot.test.rules.ServiceRule;
 import net.sourceforge.jwebunit.htmlunit.HtmlUnitTestingEngineImpl;
 import net.sourceforge.jwebunit.junit.WebTester;
@@ -65,16 +63,6 @@ public class HomePageTest {
 		webTester.gotoPage("/");
 		getWebClient().waitForBackgroundJavaScript(2000);
 		webTester.assertTextPresent("Sylvester Stallone");
-	}
-
-	@Test
-	public void when_hire_stallone_should_not_hire_him_again() {
-		webTester.gotoPage("/");
-		getWebClient().waitForBackgroundJavaScript(2000);
-		webTester.assertLinkPresent("hire-stallone");
-		webTester.clickLink("hire-stallone");
-		webTester.clickButton("btn-dialog-hire-soldier");
-		assertThat(on(' ').split(webTester.getElementById("hire-stallone").getAttribute("class"))).contains("disabled");
 	}
 
 	@After

@@ -3,20 +3,21 @@ package resources;
 import static com.google.common.collect.Iterables.transform;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Lists.partition;
+import static java.lang.Boolean.TRUE;
 import static javax.ws.rs.core.Response.status;
+import static javax.ws.rs.core.Response.Status.FORBIDDEN;
 
 import java.util.List;
 import java.util.Map;
 
 import javax.ws.rs.GET;
-import javax.ws.rs.PUT;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
@@ -54,19 +55,29 @@ public class Soldiers {
 
 	@GET
 	@Path("soldiers.jsonp")
-	@Produces("application/ecmascript")
+	@Produces("application/javascript")
 	public JSONWithPadding allSoldiers(@QueryParam("callback") final String callbackName) {
 		final Map<String, List<ThreeSoldiers>> allSoldiers = allSoldiers();
 		return new JSONWithPadding(allSoldiers, callbackName);
 	}
 
-	@PUT
-	@Path("hire/stalonne")
-	public void hireSoldier() {
-		if (soldiers.get(0).getHired()) {
-			final Response error = status(Status.FORBIDDEN).entity("Sorry, stalonne is already hired...").build();
+	@POST
+	@Path("hire/stallone")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Soldier hireSoldier() {
+		final Soldier stallone = soldiers.get(0);
+		if (stallone.getHired()) {
+			final Response error = status(FORBIDDEN).entity("Sorry, stallone is already hired...").build();
 			throw new WebApplicationException(error);
 		}
-		soldiers.get(0).setHired(Boolean.TRUE);
+		stallone.setHired(TRUE);
+		return stallone;
+	}
+
+	@POST
+	@Path("hire/norris")
+	public void hireChuckNorris() {
+		final Response error = status(FORBIDDEN).entity("You can never hire chuck norris because chuck norris hired you...").build();
+		throw new WebApplicationException(error);
 	}
 }
