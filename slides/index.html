@@ -82,6 +82,7 @@
         <pre>
           <code contenteditable>git clone git@github.com:ericlemerdy/mepc.git</code>
         </pre>
+        <p>Ask for accreditation to push</p>
       </section>
       <section>
         <h2>Execute application locally</h2>
@@ -105,12 +106,26 @@ foreman start -f java/Procfile</code>
         <p>...and push !</p>
       </section>
       <section>
+        <h2>Ideas</h2>
+        <ul>
+          <li>"un-hire"</li>
+          <li>get hire state from server</li>
+          <li>save hire state</li>
+          <li>...</li>
+        </ul>
+      </section>
+      <section>
         <h2>How to push ?</h2>
         <p>Use etc/git-build</p>
-        <pre><code contenteditable># The first time:
+        <pre>
+          <code contenteditable># The first time:
 # git config private-build.command "mvn clean install -f java/pom.xml && mvn clean install -f java/mepc-functional-tests/pom.xml"
-git build</code></pre>
-        <ul><li>Creates a local clone, build there and push.</li><li>Does not trouble your for next developement.</li></ul>
+git build</code>
+        </pre>
+        <ul>
+          <li>Creates a local clone, build there and push.</li>
+          <li>Does not trouble your for next developement.</li>
+        </ul>
       </section>
       <section>
         <h1>B.A.C.K.U.P</h1>
