@@ -2,7 +2,15 @@
 SUFFIX=`date +%Y%m%d%H%M%S`
 
 ENVTYPE=$1
-source ${ENVTYPE}_ips
+source /root/scripts/lxc/${ENVTYPE}_ips
+
+echo sudo lxc-list \|grep -E "^  ${ENVTYPE}(db|legacydb|app|front)[0-9]{14}"
+sudo lxc-list |grep -E "^  ${ENVTYPE}(db|legacydb|app|front)[0-9]{14}"
+if [ $? -eq 0 ]
+then
+	echo Env ${PREFIX} already exists. Delete it before creating a new one.
+	exit 1
+fi
 
 for host in db legacydb app front
 do
@@ -13,6 +21,6 @@ do
 	while read line
 	do
 		echo ${line} |awk -F'=' '{ print $2 " " $1 }' |sudo tee -a /var/lib/lxc/${CONTAINER}/rootfs/etc/hosts
-	done < ${ENVTYPE}_ips
+	done < /root/scripts/lxc/${ENVTYPE}_ips
 	sudo lxc-start -d -n ${CONTAINER}
 done

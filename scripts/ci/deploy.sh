@@ -7,7 +7,7 @@ ENV_TYPE=$1
 APP_ARTIFACT=mepc-server.tar.gz
 FRONT_ARTIFACT=front.tar.gz
 
-cd ${PROJECT_DIR}/target
+cd ${PROJECT_DIR}/mepc-server/target
 
 APP_CONTAINER=`sudo lxc-list |grep "^  ${ENV_TYPE}app" |sed 's/^ *//g' |awk -F' ' '{ print $1 }'`
 APP_DIR=/var/lib/lxc/${APP_CONTAINER}/rootfs/opt/mepc

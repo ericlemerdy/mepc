@@ -6,5 +6,5 @@ for host in front app legacydb db
 do
 	PREFIX=${ENVTYPE}${host}
 	CONTAINER=`sudo lxc-list |grep "^  ${PREFIX}" |sed 's/^ *//g' |awk -F' ' '{ print $1 }'`
-	sudo lxc-destroy -n ${CONTAINER}
+	sudo lxc-destroy -f -n ${CONTAINER}
 done
