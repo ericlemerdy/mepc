@@ -15,27 +15,22 @@
                 });
     };
 
-    var removeClickListenerFromDialogButton = function() {
-        $('#btn-dialog-hire-soldier').off('click');
-    };
-
-    var addClickListenerToDialogButton = function(data) {
-        $('#btn-dialog-hire-soldier').click(function(event) {
-            $('#hire-' + data.soldierId).addClass('disabled').off('click');
-            $('#hire-soldier-dialog').modal('hide');
-        });
-    };
-
     var addClickListenerToSoldierButtons = function() {
         $('.btn-hire-soldier').click(function(event) {
+            if ($(event.target).hasClass('disabled')) return; // Return if button is disabled
             var template = $('#hire-soldier-modal-body-template').html();
             var data = {
                 'soldierId' : event.target.getAttribute('soldier-id')
             };
             var soldierId = Mustache.render(template, data);
             $('#hire-soldier-modal-body').html(soldierId);
-            addClickListenerToDialogButton(data);
             $('#hire-soldier-dialog').modal();
+
+            $('#btn-dialog-hire-soldier').off('click'); // Remove previous listener if any
+            $('#btn-dialog-hire-soldier').one('click', function() {
+                $(this).addClass('disabled');
+                $('#hire-soldier-dialog').modal('hide');
+            }.bind(event.target)); // bind function on current target which is the hire button
         });
     };
 
@@ -43,14 +38,7 @@
         addClickListenerToSoldierButtons();
     };
 
-    var addHiddenListenerToDialog = function() {
-        $('#hire-soldier-dialog').on('hidden', function() {
-            removeClickListenerFromDialogButton();
-        });
-    };
-
     $(document).ready(function() {
-        addHiddenListenerToDialog();
         retrieveConfiguration().done(function() {
             addSoldiers().done(init);
         });
