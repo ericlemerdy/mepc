@@ -1,4 +1,13 @@
 class base {
+  stage {'before':}
+  stage {'after':}
+
+  class {'base::apt':
+  	stage => before,
+  }
+
+  Stage['before'] -> Stage['main'] -> Stage['after']
+
   user {'mepc':
     ensure => present,
     uid => 1100,
@@ -10,19 +19,14 @@ class base {
     gid => 1100,
   }
 
-  exec {'apt-get update':
-	command => '/usr/bin/apt-get update',
-	refreshonly => true,
-  }
-
   package {['curl', 'htop', 'zsh']:
 	ensure => installed,
-	require => Exec['apt-get update'],
+#	require => Exec['apt-get update'],
   }
 
   package {'language-pack-en':
 	ensure => installed,
-	require => Exec['apt-get update'],
+#	require => Exec['apt-get update'],
 	notify => Exec['update-locale'],
   }
 
