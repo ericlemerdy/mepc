@@ -27,10 +27,10 @@
             $('#hire-soldier-dialog').modal();
 
             $('#btn-dialog-hire-soldier').off('click'); // Remove previous listener if any
-            $('#btn-dialog-hire-soldier').one('click', function() {
+            $('#btn-dialog-hire-soldier').one('click', _.bind(function() {
                 $(this).addClass('disabled');
                 $('#hire-soldier-dialog').modal('hide');
-            }.bind(event.target)); // bind function on current target which is the hire button
+            }, event.target)); // bind function on current target which is the hire button
         });
     };
 
