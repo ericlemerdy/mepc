@@ -30,6 +30,7 @@
             $('#btn-dialog-hire-soldier').one('click', _.bind(function() {
                 $(this).addClass('disabled');
                 $('#hire-soldier-dialog').modal('hide');
+                // TODO : Make the ajax call
             }, event.target)); // bind function on current target which is the hire button
         });
     };
