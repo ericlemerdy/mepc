@@ -25,7 +25,11 @@ import com.google.inject.Module;
 public class DataTest {
 
 	@Rule
-	public ServiceRule<SoldierServer> serviceRule = ServiceRule.startWithRandomPort(SoldierServer.class, (Module) null);
+	public ServiceRule<SoldierServer> appRule = ServiceRule.startWithRandomPort(SoldierServer.class, (Module) null);
+
+	private String getAppHost() {
+		return System.getProperty("fr.valtech.appHost", format("localhost:%d", appRule.getPort()));
+	}
 
 	@Test
 	public void should_get_soldiers() throws Exception {
@@ -33,20 +37,19 @@ public class DataTest {
 				contains((Object) "stallone", "statham", "li"), //
 				contains((Object) "lundgren", "norris", "van-damme"), //
 				contains((Object) "willis", "schwarzenegger") //
-				)).when().get(format("http://localhost:%d/data/soldiers.json", serviceRule.getPort()));
+				)).when().get(format("http://%s/data/soldiers.json", getAppHost()));
 	}
 
 	@Test
 	public void should_get_soldiers_as_jsonp() throws Exception {
-		final List<String> lines = Resources.readLines(
-				new URL(format("http://localhost:%d/data/soldiers.jsonp?callback=foo", serviceRule.getPort())), Charsets.UTF_8);
+		final List<String> lines = Resources.readLines(new URL(format("http://%s/data/soldiers.jsonp?callback=foo", getAppHost())), Charsets.UTF_8);
 		assertThat(lines).hasSize(1);
 		assertThat(lines.get(0)).startsWith("foo({").contains("stallone").endsWith("})");
 	}
 
 	@Test
 	public void should_not_hire_stalonne_twice() throws Exception {
-		final String hireURL = format("http://localhost:%d/data/hire/stalonne", serviceRule.getPort());
+		final String hireURL = format("http://%s/data/hire/stalonne", getAppHost());
 		expect().statusCode(SC_NO_CONTENT).when().put(hireURL);
 		expect().statusCode(SC_FORBIDDEN).body(is("Sorry, stalonne is already hired...")).when().put(hireURL);
 	}

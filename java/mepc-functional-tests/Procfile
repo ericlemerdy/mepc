@@ -1,0 +1,1 @@
+validate: mvn clean test -DargLine="-Dfr.valtech.frontHost=$FRONT_HOST -Dfr.valtech.appHost=$APP_HOST"
