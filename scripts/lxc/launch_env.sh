@@ -12,7 +12,7 @@ then
 	exit 1
 fi
 
-for host in db legacydb app front
+for host in app front
 do
 	PREFIX=${ENVTYPE}${host}
 	CONTAINER=${PREFIX}${SUFFIX}
