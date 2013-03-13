@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Mise En Production Continue</title>
+<title>Mise En Production Continue avec Puppet</title>
 <meta name="description" content="Learn to continuously deliver javascript/java web application, safely">
 <meta name="author" content="Eric Le Merdy, Pierre Chaussalet">
 <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -19,8 +19,16 @@
 							: 'paper') + '.css" type="text/css" media="print">');
 </script>
 <style type="text/css">
+.reveal {
+  color: black;
+}
 .whitespirit .reveal .state-background {
 	background: rgba(255, 255, 255, .9);
+}
+.welcome .reveal .state-background {
+  background-image: url('Devoxx 2013 FR Template V2/top.png'), url('Devoxx 2013 FR Template V2/bottom.png'), url('Devoxx 2013 FR Template V2/devoxx-background.png');
+  background-position: left top, left bottom, left -200px;
+  background-repeat: no-repeat;
 }
 </style>
 </head>
@@ -28,9 +36,9 @@
   <div class="reveal">
     <!-- Any section element inside of this container is displayed as a slide -->
     <div class="slides">
-      <section data-state="whitespirit">
-        <img src="assets/Valtech_Logo_Black_jpg.png" alt="Valtech logo">
-        <p class="fragment" style="color: black;">presents</p>
+      <section data-state="welcome whitespirit">
+        <h1>Mise en Production<br />Continue<br />avec Puppet</h1>
+        <h3>9h30 - 12h30 - Salle Louis Armstrong CD</h3>
       </section>
       <section>
         <h1>M-E-P-C</h1>
