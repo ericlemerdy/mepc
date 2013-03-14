@@ -84,194 +84,28 @@ body {
         </div>
       </section>
       <section data-state="slide">
-        <h2>The application</h2>
-        <p>
-          <a href="http://front.chaussalet.net/" target="_blank">http://front.chassalet.net/</a>
-        </p>
+        <h2>Sondage</h2>
+        <h3>Combien de temps pour déployer une seule ligne de code en production ?</h3>
+        <ol>
+          <li>plus d'un an</li>
+          <li>6 mois</li>
+          <li>1 mois</li>
+          <li>2 semaines</li>
+          <li>tous les jours</li>
+          <li>à chaque commit !</li>
+        </ol>
       </section>
       <section data-state="slide">
-        <h2>The dashboard</h2>
-        <p>
-          <a href="http://X.X.X.X/">http://X.X.X.X/</a>
-        </p>
-        <p>
-          <small>Powered by <a href="https://dashku.com/">dashku</a></small>
-        <p>
-      </section>
-      <section data-state="slide">
-        <h2>Let's deploy</h2>
-        <p>
-        <blockquote>This is the first time, as usual.</blockquote>
-        </p>
-      </section>
-      <section data-state="slide">
-        <h2>The application</h2>
-        <p>
-          <a href="http://front.chaussalet.net/">http://front.chaussalet.net/</a>
-        </p>
-      </section>
-      <section data-state="slide">
-        <h2>What does it looks like ?</h2>
-        <p>
-          <img class='centered' src='assets/network.png'>
-        </p>
-        <p></p>
-      </section>
-      <section data-state="slide">
-        <h2>Get the stuff</h2>
-        <p>Clone repository</p>
-        <pre>
-          <code contenteditable>git clone git@github.com:ericlemerdy/mepc.git</code>
-        </pre>
-        <p>Ask for accreditation to push</p>
-      </section>
-      <section data-state="slide">
-        <h2>Execute application locally</h2>
-        <p>Compile</p>
-        <pre>
-          <code contenteditable># sudo apt-get install maven
-mvn clean install -f java/pom.xml
-mvn clean install -f java/mepc-functional-tests/pom.xml
-</code>
-        </pre>
-        <p>Launch application</p>
-        <pre>
-          <code contenteditable># sudo gem install foreman
-foreman start -f java/Procfile</code>
-        </pre>
-        <p>
-          <a href='http://localhost:8080/' target='_blank'>http://localhost:8080/</a>
-        </p>
-      </section>
-      <section data-state="slide">
-        <h2>The push process</h2>
-        <p>lxc-host is the chef</p>
+        <h2>Devops ?</h2>
         <ul>
-          <li>cron looking for git changes</li>
-          <li>build artifacts</li>
-          <li>deploy on integration
-            <ul>
-              <li>create integration</li>
-              <li>start integration</li>
-              <li>install dependencies and deploy artifacts</li>
-              <li>validate integration</li>
-              <li>destroy integration</li>
-            </ul>
-          </li>
-          <li>deploy on blue | green</li>
-          <li>swich blue | green</li>
+          <li>Infrastructure as code <span class="fragment"> ^_^ puppet !</span></li>
+          <li>Continuous Delivery <span class="fragment"> ^_^ puppet !</span></li>
+          <li>Organisation <span class="fragment"> =[ puppet</span></li>
         </ul>
       </section>
       <section data-state="slide">
-        <h2>Now it's your turn</h2>
-        <p>Develop a feature...</p>
-        <p>...and push !</p>
-      </section>
-      <section data-state="slide">
-        <h2>Ideas</h2>
-        <ul>
-          <li>"un-hire"</li>
-          <li>get hire state from server</li>
-          <li>save hire state</li>
-          <li>...</li>
-        </ul>
-      </section>
-      <section data-state="slide">
-        <h2>How to push ?</h2>
-        <p>Use etc/git-build</p>
-        <pre>
-          <code contenteditable># The first time:
-# git config private-build.command "mvn clean install -f java/pom.xml && mvn clean install -f java/mepc-functional-tests/pom.xml"
-git build</code>
-        </pre>
-        <ul>
-          <li>Creates a local clone, build there and push.</li>
-          <li>Does not trouble your for next developement.</li>
-        </ul>
-      </section>
-      <section data-state="slide">
-        <h1>B.A.C.K.U.P</h1>
-      </section>
-      <section data-state="slide">
-        <h2>Mimic production environment</h2>
-        <h3>A data-center on your regular laptop ?</h3>
-        <p>
-          Go virtual :<br /> VirtualBox, Vagrant, LXC, ...
-        </p>
-        <h3>Got extra dollars ?</h3>
-        <p>
-          Use the cloud :<br /> Amazon EC2, ...
-        </p>
-      </section>
-      <section data-state="slide">
-        <h2>Approaches to Continuous Deployment</h2>
-        <blockquote>It is always possible to change by making good choices.</blockquote>
-        <p>
-          Kunzang Choden - <a href="http://www.evene.fr/citation/toujours-possible-changer-faisant-bons-choix-78786.php" target="_blank">Source (fr)</a>
-        </p>
-      </section>
-      <section data-state="slide">
-        <h2>Production first, quality by roll-back</h2>
-        <p>
-          <img src="assets/cowboy.jpg" title="Source: 1791675 [RF] &copy; www.visualphotos.com">
-        </p>
-      </section>
-      <section data-state="slide">
-        <h3>Quality first, production as soon as ready</h3>
-        <p>
-          <img src='assets/xp.gif'>
-        </p>
-      </section>
-      <section data-state="slide">
-        <h2>Comparison</h2>
-        <small>
-          <table>
-            <tr>
-              <th>Production first, quality by roll-back
-              <th>Quality first, production as soon as ready
-            <tr>
-              <td>
-                <p class="fragment highlight-green">Minimal cycle time
-                <p class="fragment highlight-red">Business impact of a failure
-                <p>Maturity for roll-back efficiency
-                <p>Production and quality monitoring
-              <td>
-                <p class="fragment highlight-green">Functional quality
-                <p class="fragment highlight-green">Minimum Marketable Feature
-          </table>
-        </small>
-      </section>
-      <section data-state="slide">
-        <h3>Physical architecture</h3>
-        <p>
-          <img class='centered' src='assets/network.png'>
-        </p>
-      </section>
-      <section data-state="slide">
-        <h2>Question :</h2>
-        <blockquote>How would you make production safe from a material failure, a push that broke the application, a regression in contracts ?</blockquote>
-      </section>
-      <section data-state="slide">
-        <h2>How to make production safe ?</h2>
-        <small>
-          <table>
-            <tr>
-              <td><p>Static resources always UP
-              <td><p>JUnit, graph by Zabbix
-            <tr>
-              <td><p>Dynamic resources always UP
-              <td><p>JUnit, graph by Zabbix
-            <tr>
-              <td><p>Dynamic resources API non-regression
-              <td><p>JUnit with RestAssured
-            <tr>
-              <td><p>Dynamic resources functional test
-              <td><p>Covered
-            <tr>
-              <td><p>Applicative functional test
-              <td><p>JUnit with JWebUnit on the application
-          </table>
-        </small>
+        <h2>Qu'est-ce-que Puppet ?</h2>
+        <p>Un programme client/serveur de déploiement de configuration système.</p>
       </section>
     </div>
   </div>
