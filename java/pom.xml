@@ -9,9 +9,6 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>1.6</maven.compiler.source>
     <maven.compiler.target>1.6</maven.compiler.target>
-    <jersey.version>1.14</jersey.version>
-    <hamcrest.version>1.2.1</hamcrest.version>
-    <jwebunit.version>3.0</jwebunit.version>
   </properties>
   <modules>
     <module>mepc-server</module>
@@ -26,17 +23,17 @@
       <dependency>
         <groupId>com.sun.jersey</groupId>
         <artifactId>jersey-server</artifactId>
-        <version>${jersey.version}</version>
+        <version>1.14</version>
       </dependency>
       <dependency>
         <groupId>com.sun.jersey</groupId>
         <artifactId>jersey-core</artifactId>
-        <version>${jersey.version}</version>
+        <version>1.14</version>
       </dependency>
       <dependency>
         <groupId>com.sun.jersey</groupId>
         <artifactId>jersey-json</artifactId>
-        <version>${jersey.version}</version>
+        <version>1.14</version>
       </dependency>
       <dependency>
         <groupId>org.projectlombok</groupId>
@@ -56,12 +53,12 @@
       <dependency>
         <groupId>net.sourceforge.jwebunit</groupId>
         <artifactId>jwebunit-core</artifactId>
-        <version>${jwebunit.version}</version>
+        <version>3.0</version>
       </dependency>
       <dependency>
         <groupId>net.sourceforge.jwebunit</groupId>
         <artifactId>jwebunit-htmlunit-plugin</artifactId>
-        <version>${jwebunit.version}</version>
+        <version>3.0</version>
       </dependency>
       <dependency>
         <groupId>net.gageot</groupId>
@@ -76,12 +73,12 @@
       <dependency>
         <groupId>org.hamcrest</groupId>
         <artifactId>hamcrest-core</artifactId>
-        <version>${hamcrest.version}</version>
+        <version>1.2.1</version>
       </dependency>
       <dependency>
         <groupId>org.hamcrest</groupId>
         <artifactId>hamcrest-library</artifactId>
-        <version>${hamcrest.version}</version>
+        <version>1.2.1</version>
       </dependency>
       <dependency>
         <groupId>org.easytesting</groupId>
