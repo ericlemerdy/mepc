@@ -21,12 +21,13 @@ import javax.ws.rs.core.Response;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
+import com.google.inject.Inject;
 import com.sun.jersey.api.json.JSONWithPadding;
 
 @Path("/data")
 public class Soldiers {
 
-	private final static List<Soldier> soldiers = newArrayList(
+	private final List<Soldier> soldiers = newArrayList(
 			new Soldier("stallone", "Sylvester Stallone", "This ex-boxer is a vietnâm veteran that really had a rough."), //
 			new Soldier("statham", "Jason Statham", "Kickboxing expert, body-to-body, it leaves no chance to your enemies."), //
 			new Soldier("li", "Jet Li", "Do not be fooled by its size, this man can send you to the mat quickly thanks to its speed."), //
@@ -38,6 +39,10 @@ public class Soldiers {
 					"schwarzenegger",
 					"Arnold Schwarzenegger",
 					"When you're born in the Austrian mountains and you carries the milk down to the valley, you are getting stronger... If you hire him, he will be back."));
+
+	@Inject
+	public Soldiers() {
+	}
 
 	@GET
 	@Path("soldiers.json")

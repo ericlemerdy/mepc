@@ -19,6 +19,7 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.sun.jersey.api.core.DefaultResourceConfig;
+import com.sun.jersey.api.core.ResourceConfig;
 import com.sun.jersey.guice.spi.container.GuiceComponentProviderFactory;
 import com.sun.jersey.spi.container.ContainerRequest;
 import com.sun.jersey.spi.container.ContainerResponse;
@@ -42,7 +43,7 @@ public class FrontServer {
 	}
 
 	public void start(final int port) throws IllegalArgumentException, IOException {
-		final DefaultResourceConfig config = new DefaultResourceConfig(FrontResources.class);
+		final ResourceConfig config = new DefaultResourceConfig(FrontResources.class);
 		final ContainerResponseFilter containerResponseFilter = new ContainerResponseFilter() {
 			@Override
 			public ContainerResponse filter(final ContainerRequest request, final ContainerResponse response) {
