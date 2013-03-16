@@ -111,8 +111,7 @@ body {
         <section data-state="slide">
           <h2>À quoi ça ressemble ? 1/4</h2>
           <h4>Structure de répertoires</h4>
-          <pre>
-            <code>
+          <pre><code>
         /etc/puppet
         |-- manifests           
         |   `-- site.pp           => Point d'entrée
@@ -123,89 +122,82 @@ body {
         |       |-- files
         |       `-- lib
         `-- templates
-            </code>
-          </pre>
+          </code></pre>
         </section>
         <section data-state="slide">
           <h2>À quoi ça ressemble ? 2/4</h2>
           <h4>site.pp</h4>
-          <pre>
-            <code>
-  import "nodes"
-  import "defines"
+          <pre><code class="ruby">
+import "nodes"
+import "defines"
   
-  Exec { path => "/usr/bin:/usr/sbin/:/bin:/sbin" }
+Exec { path => "/usr/bin:/usr/sbin/:/bin:/sbin" }
   
-  case $operatingsystem {
-    Ubuntu: {
-        Package { provider => aptitude }
-    }
-    Redhat: {
-        Package { provider => up2date }
-    }
-    Debian: {
-        Package { provider => aptitude }
-    }
-    default: {
-        Package { provider => aptitude }
-    }
+case $operatingsystem {
+  Ubuntu: {
+      Package { provider => aptitude }
   }
-            </code>
-          </pre>
+  Redhat: {
+      Package { provider => up2date }
+  }
+  Debian: {
+      Package { provider => aptitude }
+  }
+  default: {
+      Package { provider => aptitude }
+  }
+}
+          </code></pre>
         </section>
         <section data-state="slide">
           <h2>À quoi ça ressemble ? 3/4</h2>
           <h4>nodes.pp</h4>
-          <pre>
-            <code>
-  class urbandivesnap-default-node {
-    include base-module
-  }
-  class urbandivesnap-FO-Cache-V3-node {
-    include ud-base-sec-module
-    include ud-fo-cachev3-module
-  }
-  class urbandivesnap-FO-Solr-node {
-    include ud-fo-solr-module
-  }
+          <pre><code class="ruby">
+class urbandivesnap-default-node {
+  include base-module
+}
+class urbandivesnap-FO-Cache-V3-node {
+  include ud-base-sec-module
+  include ud-fo-cachev3-module
+}
+class urbandivesnap-FO-Solr-node {
+  include ud-fo-solr-module
+}
 
-  node snap-ud-fo-cache-001 {
-    include urbandivesnap-default-node
-    include urbandivesnap-FO-Cache-V3-node
-  }
-  node snap-ud-fo-solr-001, snap-ud-fo-solr-002 {
-    include urbandivesnap-default-node
-    include urbandivesnap-FO-Solr-node
-  }
-            </code>
-          </pre>
+node snap-ud-fo-cache-001 {
+  include urbandivesnap-default-node
+  include urbandivesnap-FO-Cache-V3-node
+}
+node snap-ud-fo-solr-001, snap-ud-fo-solr-002 {
+  include urbandivesnap-default-node
+  include urbandivesnap-FO-Solr-node
+}
+          </code></pre>
         </section>
         <section data-state="slide">
           <h2>À quoi ça ressemble ? 4/4</h2>
           <h4>init.pp</h4>
-          <pre>
-            <code>
-  class ud-fo-solr-module {
-    file { "/etc/sysctl.conf":
-      ensure  => present,
-      owner   => root,
-      group   => root,
-      mode    => 644,
-      source  => "puppet:///ud-fo-solr-module/sysctl.conf",
-    }
-    exec { "Reload /etc/sysctl.conf":
-      command     => "/sbin/sysctl -p /etc/sysctl.conf",
-      refreshonly => true,
-      subscribe   => File["/etc/sysctl.conf"],
-      require     => File["/etc/sysctl.conf"],
-    }
-    package { "s3cmd":
-      ensure  => installed,
-      require => Exec['Reload apt'],
-    }
+          <pre><code class="ruby">
+class ud-fo-solr-module {
+  file { "/etc/sysctl.conf":
+    ensure  => present,
+    owner   => root,
+    group   => root,
+    mode    => 644,
+    source  => "puppet:///ud-fo-solr-module/sysctl.conf",
   }
-            </code>
-          </pre>
+  exec { "Reload /etc/sysctl.conf":
+    command     => "/sbin/sysctl -p /etc/sysctl.conf",
+    refreshonly => true,
+    subscribe   => File["/etc/sysctl.conf"],
+    require     => File["/etc/sysctl.conf"],
+  }
+  package { "s3cmd":
+    ensure  => installed,
+    require => Exec['Reload apt'],
+  }
+}
+          </code></pre>
         </section>
       </section>
       <section data-state="slide">
