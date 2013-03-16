@@ -107,6 +107,118 @@ body {
         <h2>Qu'est-ce-que Puppet ?</h2>
         <p>Un programme de gestion de configuration système d'un ensemble de machines.</p>
       </section>
+        <section>
+          <section>
+            <h2>What does it look like ? 1/4</h2>
+            <h4>Directory structure</h4>
+            <pre>
+              <code>
+        /etc/puppet
+        |-- manifests           
+        |   `-- site.pp           => Entry point
+        |-- modules
+        |   `-- MODULE_NAME
+        |       |-- manifests
+        |       |   `-- init.pp   => Default class
+        |       |-- files
+        |       `-- lib
+        `-- templates
+              </code>
+            </pre>
+          </section>
+          <section>
+            <h2>What does it look like ? 2/4</h2>
+            <h4>site.pp</h4>
+            <pre>
+              <code>
+  import "nodes"
+  import "defines"
+  
+  Exec { path => "/usr/bin:/usr/sbin/:/bin:/sbin" }
+  
+  case $operatingsystem {
+    Ubuntu: {
+        Package { provider => aptitude }
+    }
+    Redhat: {
+        Package { provider => up2date }
+    }
+    Debian: {
+        Package { provider => aptitude }
+    }
+    default: {
+        Package { provider => aptitude }
+    }
+  }
+              </code>
+            </pre>
+          </section>
+          <section>
+            <h2>What does it look like ? 3/4</h2>
+            <h4>nodes.pp</h4>
+            <pre>
+              <code>
+  class urbandivesnap-default-node {
+    include base-module
+  }
+  class urbandivesnap-FO-Cache-V3-node {
+    include ud-base-sec-module
+    include ud-fo-cachev3-module
+  }
+  class urbandivesnap-FO-Solr-node {
+    include ud-fo-solr-module
+  }
+
+  node snap-ud-fo-cache-001 {
+    include urbandivesnap-default-node
+    include urbandivesnap-FO-Cache-V3-node
+  }
+  node snap-ud-fo-solr-001, snap-ud-fo-solr-002 {
+    include urbandivesnap-default-node
+    include urbandivesnap-FO-Solr-node
+  }
+              </code>
+            </pre>
+          </section>
+          <section>
+            <h2>What does it look like ? 4/4</h2>
+            <h4>init.pp</h4>
+            <pre>
+              <code>
+  class ud-fo-solr-module {
+    file { "/etc/sysctl.conf":
+      ensure  => present,
+      owner   => root,
+      group   => root,
+      mode    => 644,
+      source  => "puppet:///ud-fo-solr-module/sysctl.conf",
+    }
+    exec { "Reload /etc/sysctl.conf":
+      command     => "/sbin/sysctl -p /etc/sysctl.conf",
+      refreshonly => true,
+      subscribe   => File["/etc/sysctl.conf"],
+      require     => File["/etc/sysctl.conf"],
+    }
+    package { "s3cmd":
+      ensure  => installed,
+      require => Exec['Reload apt'],
+    }
+  }
+              </code>
+            </pre>
+          </section>
+        </section>
+
+      <section data-state="slide">
+        <h2>Rejoignez-nous !</h2>
+        <ul>
+          <li>ESSID : mepc</li>
+          <li>Clef : 19010804</li>
+          <ul>
+            <li>http://filer/</li>
+          <ul>
+        </ul>
+      </section>
       <section data-state="slide">
         <h2>Installation</h2>
         <ul>
