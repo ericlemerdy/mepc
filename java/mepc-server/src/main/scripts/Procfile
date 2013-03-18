@@ -1,1 +1,0 @@
-app: java -cp *:lib/* server.SoldierServer
