@@ -1,5 +1,3 @@
-package it;
-
 import static com.google.common.io.Resources.readLines;
 import static com.jayway.restassured.RestAssured.expect;
 import static java.lang.String.format;
@@ -12,23 +10,14 @@ import static org.hamcrest.Matchers.is;
 import java.net.URL;
 import java.util.List;
 
-import net.gageot.test.rules.ServiceRule;
-
-import org.junit.Rule;
 import org.junit.Test;
 
-import server.SoldierServer;
-
 import com.google.common.base.Charsets;
-import com.google.inject.Module;
 
-public class DataTest {
-
-	@Rule
-	public ServiceRule<SoldierServer> appRule = ServiceRule.startWithRandomPort(SoldierServer.class, (Module) null);
+public class ITDataTest {
 
 	private String getAppHost() {
-		return System.getProperty("fr.valtech.appHost", format("localhost:%d", appRule.getPort()));
+		return System.getProperty("fr.valtech.appHost", "localhost:8080");
 	}
 
 	@Test

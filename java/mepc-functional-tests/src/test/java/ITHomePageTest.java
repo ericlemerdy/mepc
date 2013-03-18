@@ -1,43 +1,22 @@
-package it;
 
-import static com.google.inject.name.Names.named;
 import static java.lang.String.format;
-import net.gageot.test.rules.ServiceRule;
 import net.sourceforge.jwebunit.htmlunit.HtmlUnitTestingEngineImpl;
 import net.sourceforge.jwebunit.junit.WebTester;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.RuleChain;
-import org.junit.rules.TestRule;
-
-import server.FrontServer;
-import server.SoldierServer;
 
 import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
 import com.gargoylesoftware.htmlunit.WebClient;
-import com.google.inject.AbstractModule;
-import com.google.inject.Module;
 
-public class HomePageTest {
-
-	public ServiceRule<SoldierServer> soldierRule = ServiceRule.startWithRandomPort(SoldierServer.class, (Module) null);
-	public ServiceRule<FrontServer> frontRule = ServiceRule.startWithRandomPort(FrontServer.class, new AbstractModule() {
-		@Override
-		protected void configure() {
-			bind(String.class).annotatedWith(named("dataHost")).toInstance(format("localhost:%d", soldierRule.getPort()));
-		}
-	});
-	@Rule
-	public TestRule bothServers = RuleChain.outerRule(soldierRule).around(frontRule);
+public class ITHomePageTest {
 
 	private WebTester webTester;
 
 	@Before
 	public void createWebTester() {
-		final String frontHost = System.getProperty("fr.valtech.frontHost", format("localhost:%d", frontRule.getPort()));
+		final String frontHost = System.getProperty("fr.valtech.frontHost", "localhost:8080");
 		webTester = new WebTester();
 		webTester.setBaseUrl(format("http://%s/", frontHost));
 		webTester.beginAt("/");

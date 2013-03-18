@@ -12,6 +12,7 @@
   </properties>
   <modules>
     <module>mepc-server</module>
+    <module>mepc-functional-tests</module>
   </modules>
   <dependencyManagement>
     <dependencies>
@@ -104,25 +105,6 @@
   </dependencyManagement>
   <build>
     <plugins>
-      <plugin>
-        <artifactId>maven-dependency-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>copy-dependencies</id>
-            <phase>package</phase>
-            <goals>
-              <goal>copy-dependencies</goal>
-            </goals>
-            <configuration>
-              <stripVersion>true</stripVersion>
-              <includeScope>compile</includeScope>
-              <includeScope>runtime</includeScope>
-              <excludeScope>test</excludeScope>
-              <outputDirectory>${project.build.directory}/lib</outputDirectory>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
