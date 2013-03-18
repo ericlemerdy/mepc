@@ -110,7 +110,7 @@
               <goal>run-war</goal>
             </goals>
             <configuration>
-              <webApp>${project.build.directory}/lib/mepc-server.war</webApp>
+              <webApp>${project.build.directory}/dependency/mepc-server.war</webApp>
               <scanIntervalSeconds>0</scanIntervalSeconds>
               <daemon>true</daemon>
             </configuration>
