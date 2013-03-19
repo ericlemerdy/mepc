@@ -44,6 +44,12 @@ public class ITDataTest {
 	}
 
 	@Test
+	public void should_hire_statham() throws Exception {
+		final String hireURL = format("http://%s/data/hire/statham", getAppHost());
+		expect().statusCode(SC_OK).when().post(hireURL);
+	}
+
+	@Test
 	public void should_not_hire_norris() throws Exception {
 		final String hireURL = format("http://%s/data/hire/norris", getAppHost());
 		expect().statusCode(SC_FORBIDDEN).body(is("You can never hire chuck norris because chuck norris hired you...")).when().post(hireURL);

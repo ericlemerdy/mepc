@@ -30,9 +30,9 @@ public class SoldiersTest {
 	}
 
 	@Test
-	public void should_hire_stalone() {
+	public void should_hire_soldier() {
 		final Soldiers soldierResources = new Soldiers();
-		soldierResources.hireSoldier();
+		soldierResources.hireSoldier("stallone");
 
 		final List<Soldier> firstThreeSoldiers = soldierResources.allSoldiers().get("soldiers").get(0).getSoldiers();
 
