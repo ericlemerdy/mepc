@@ -14,6 +14,9 @@
     <module>mepc-server</module>
     <module>mepc-functional-tests</module>
   </modules>
+  <prerequisites>
+    <maven>3.0.3</maven>
+  </prerequisites>
   <dependencyManagement>
     <dependencies>
       <dependency>
