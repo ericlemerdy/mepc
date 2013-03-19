@@ -1,5 +1,3 @@
-
-import static java.lang.String.format;
 import net.sourceforge.jwebunit.htmlunit.HtmlUnitTestingEngineImpl;
 import net.sourceforge.jwebunit.junit.WebTester;
 
@@ -16,9 +14,8 @@ public class ITHomePageTest {
 
 	@Before
 	public void createWebTester() {
-		final String frontHost = System.getProperty("fr.valtech.frontHost", "localhost:8080");
 		webTester = new WebTester();
-		webTester.setBaseUrl(format("http://%s/", frontHost));
+		webTester.setBaseUrl("http://localhost:8080/");
 		webTester.beginAt("/");
 		getWebClient().setAjaxController(new NicelyResynchronizingAjaxController());
 	}
