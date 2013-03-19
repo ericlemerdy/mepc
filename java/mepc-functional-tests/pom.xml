@@ -26,18 +26,13 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>net.sourceforge.jwebunit</groupId>
-      <artifactId>jwebunit-core</artifactId>
+      <groupId>org.fluentlenium</groupId>
+      <artifactId>fluentlenium-core</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>net.sourceforge.htmlunit</groupId>
-      <artifactId>htmlunit</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>net.sourceforge.jwebunit</groupId>
-      <artifactId>jwebunit-htmlunit-plugin</artifactId>
+      <groupId>org.fluentlenium</groupId>
+      <artifactId>fluentlenium-festassert</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
