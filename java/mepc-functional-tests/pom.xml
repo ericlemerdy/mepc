@@ -11,24 +11,18 @@
   </properties>
   <dependencies>
     <dependency>
-      <groupId>com.google.inject</groupId>
-      <artifactId>guice</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.sun.jersey</groupId>
-      <artifactId>jersey-server</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.sun.jersey</groupId>
-      <artifactId>jersey-core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.sun.jersey.contribs</groupId>
-      <artifactId>jersey-guice</artifactId>
-    </dependency>
-    <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.easytesting</groupId>
+      <artifactId>fest-assert</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -37,13 +31,13 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>net.sourceforge.jwebunit</groupId>
-      <artifactId>jwebunit-htmlunit-plugin</artifactId>
+      <groupId>net.sourceforge.htmlunit</groupId>
+      <artifactId>htmlunit</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>net.gageot</groupId>
-      <artifactId>testexpert</artifactId>
+      <groupId>net.sourceforge.jwebunit</groupId>
+      <artifactId>jwebunit-htmlunit-plugin</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -60,12 +54,6 @@
       <groupId>org.hamcrest</groupId>
       <artifactId>hamcrest-library</artifactId>
       <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>fr.valtech</groupId>
-      <artifactId>mepc-server</artifactId>
-      <version>${project.version}</version>
-      <type>war</type>
     </dependency>
   </dependencies>
   <build>
@@ -130,7 +118,7 @@
         <executions>
           <execution>
             <id>copy-system-under-test</id>
-            <phase>process-sources</phase>
+            <phase>process-test-resources</phase>
             <goals>
               <goal>copy</goal>
             </goals>
@@ -139,6 +127,7 @@
                 <artifactItem>
                   <groupId>fr.valtech</groupId>
                   <artifactId>mepc-server</artifactId>
+                  <version>${project.version}</version>
                   <type>war</type>
                   <overWrite>true</overWrite>
                   <destFileName>mepc-server.war</destFileName>
