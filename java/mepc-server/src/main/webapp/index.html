@@ -21,7 +21,7 @@
           <dd>{{description}}</dd>
         </dl>
         <div class="pull-right">
-          <a id="hire-{{id}}" soldier-id="{{id}}" class="btn-hire-soldier btn btn-inverse btn-large">
+          <a id="hire-{{id}}" soldier-id="{{id}}" class="btn-hire-soldier btn btn-inverse btn-large{{#hired}} disabled{{/hired}}">
             <i class="icon-white icon-plus-sign"></i>
             Hire
           </a>
