@@ -1,0 +1,30 @@
+{% include 'header.html' %}
+<h3>{{ teams|length }} équipe{% if teams|length > 1 %}s{% endif %} :</h3>
+  {% for team in teams %}
+      <h4>{{ team }}</h4>
+      <div class="row">
+    {% for env in srvs[team] %}
+      <div class="span4">
+      <table class="table table-condensed">
+        <tr style="background-color: {{ env }}; color: white;">
+          <th colspan="2">{{ env }}</th>
+        </tr>
+      {% for srv in srvs[team][env] %}
+        <tr>
+          <td>{{ srv }}</td>
+          <td>{{ srvs[team][env][srv] }}</td>
+        </tr>
+      {% endfor %}
+        </tr>
+      </table>
+      </div>
+    {%endfor %}
+      </div>
+  {% endfor %}
+  <div class="row">
+    <div class="span8 offset4">
+      <a href="/" class="btn btn-primary">Nouvelle équipe</a>
+    </div>
+  </div>
+</form>
+{% include 'footer.html' %}

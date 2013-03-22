@@ -1,0 +1,32 @@
+{% include 'header.html' %}
+<h3>Equipe : {{ team }}</h3>
+<form action="members" method="POST">
+  <input type="hidden" name="team" value="{{ team }}">
+  {% for env in envs %}
+    {% for srv in servers %}
+    <div class="row">
+      <div class="span4">
+        <p class="lead">{{ env }} {{ srv }} : </p>
+      </div>
+      <div class="span">
+        IP :
+      </div>
+      <div class="span3">
+        <input type="text" name="{{ env|lower }}_{{ srv|lower }}_ip">
+      </div>
+      <div class="span">
+        Port :
+      </div>
+      <div class="span3">
+        <input type="text" name="{{ env|lower }}_{{ srv|lower }}_port" placeholder="9999">
+      </div>
+    </div>
+    {%endfor %}
+  {% endfor %}
+  <div class="row">
+    <div class="span8 offset4">
+      <button type="submit" class="btn btn-primary">Valider</button>
+    </div>
+  </div>
+</form>
+{% include 'footer.html' %}

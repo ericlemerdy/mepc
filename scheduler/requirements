@@ -1,0 +1,12 @@
+APScheduler==2.1.0
+Flask==0.9
+Flask-And-Redis==0.4
+Jinja2==2.6
+Werkzeug==0.8.3
+argparse==1.2.1
+distribute==0.6.24
+dulwich==0.8.7
+pycrypto==2.6
+redis==2.7.2
+uWSGI==1.9
+wsgiref==0.1.2
