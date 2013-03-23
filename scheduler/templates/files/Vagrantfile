@@ -1,0 +1,18 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant::Config.run do |config|
+  config.vm.box = "quetzal"
+
+    config.vm.box_url = "http://127.0.0.1/mepc-lxc/ubuntu_quetzal.box"
+  config.ssh.private_key_path = "mepc.pem"
+  config.vm.network :bridged
+  config.vm.provision :puppet, 
+                      :facter => {'fqdn' => {{ fqdn }}},
+                      :module_path => 'modules' do |puppet|
+    puppet.options = ["--templatedir","/vagrant/templates"]
+    puppet.manifests_path = "manifests"
+    puppet.manifest_file  = "sensu.pp"
+  end
+
+end
