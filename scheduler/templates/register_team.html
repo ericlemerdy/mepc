@@ -1,0 +1,17 @@
+{% include 'header.html' %}
+<form action="team" method="POST">
+  <div class="row">
+    <div class="span4">
+      <p class="lead">Choisissez un nom : </p>
+    </div>
+    <div class="span8">
+      <input type="text" name="name">
+    </div>
+  </div>
+  <div class="row">
+    <div class="span8 offset4">
+      <button type="submit" class="btn btn-primary">Valider</button>
+    </div>
+  </div>
+</form>
+{% include 'footer.html' %}
