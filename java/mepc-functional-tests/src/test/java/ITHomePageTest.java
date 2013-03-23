@@ -3,7 +3,6 @@ import static org.fest.assertions.fluentlenium.FluentLeniumAssertions.assertThat
 import java.util.concurrent.TimeUnit;
 
 import org.fest.assertions.Condition;
-import org.fluentlenium.adapter.FluentTest;
 import org.fluentlenium.adapter.IsolatedTest;
 import org.fluentlenium.core.Fluent;
 import org.fluentlenium.core.domain.FluentWebElement;
@@ -13,7 +12,7 @@ import org.openqa.selenium.WebDriver;
 
 import com.google.common.base.Predicate;
 
-public class ITHomePageTest extends FluentTest {
+public class ITHomePageTest extends PhantomJsTest {
 	private static final Condition<FluentWebElement> HAS_CLASS(final String classname) {
 		return new Condition<FluentWebElement>("has class " + classname) {
 			@Override
@@ -60,7 +59,7 @@ public class ITHomePageTest extends FluentTest {
 		await().atMost(2000).until(dialogHidden());
 		assertLundgrenHired(this);
 
-		IsolatedTest lundgrenIsHiredForOtherClients = new IsolatedTest();
+		IsolatedTest lundgrenIsHiredForOtherClients = new IsolatedTest(getDriver());
 		Fluent otherClient = lundgrenIsHiredForOtherClients //
 				.goTo("http://localhost:8080/") //
 				.await().atMost(2000, TimeUnit.SECONDS).until(".soldier-name").areDisplayed();
