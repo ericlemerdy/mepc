@@ -28,12 +28,16 @@
 
             $('#btn-dialog-hire-soldier').off('click'); // Remove previous listener if any
             $('#btn-dialog-hire-soldier').one('click', _.bind(function() {
-                $(this).addClass('disabled');
-                $('#hire-soldier-dialog').modal('hide');
                 $.ajax({
                     type: 'POST',
-                    url: "http://" + dataHost + "/data/hire/" + this.getAttribute('soldier-id'),
-                    error: function(xhr) { $.error("KO ! You cannot hire that guys" + xhr.status); }
+                    url: "http://" + dataHost + "/data/hire/" + this.getAttribute('soldier-id') + "?codeName=" + $('#hire-form-code-name').val(),
+                    error: function(xhr) { $.error("KO ! You cannot hire that guys" + xhr.status); },
+                    success: function(xhr) {
+                    	addSoldiers().done(function() {
+                    		init();
+                    		$('#hire-soldier-dialog').modal('hide');
+                    	});
+                    }
                 });
             }, event.target)); // bind function on current target which is the hire button
         });

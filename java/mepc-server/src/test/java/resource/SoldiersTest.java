@@ -32,11 +32,12 @@ public class SoldiersTest {
 	@Test
 	public void should_hire_soldier() {
 		final Soldiers soldierResources = new Soldiers();
-		soldierResources.hireSoldier("stallone");
+		soldierResources.hireSoldier("stallone", "Italian Stalion");
 
 		final List<Soldier> firstThreeSoldiers = soldierResources.allSoldiers().get("soldiers").get(0).getSoldiers();
 
 		assertThat(firstThreeSoldiers.get(0).getName()).isEqualTo("Sylvester Stallone");
 		assertThat(firstThreeSoldiers.get(0).getHired()).isTrue();
+		assertThat(firstThreeSoldiers.get(0).getCodeName()).isEqualTo("Italian Stalion");
 	}
 }

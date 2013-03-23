@@ -12,13 +12,15 @@
 {{#soldiers}}
   <div class="row-fluid">
     {{#soldiers}}
-      <div class="well span4 clearfix" id="{{id}}">
+      <div class="well span4 clearfix{{#hired}} muted{{/hired}}" id="{{id}}">
         <img class="photo pull-right" src="img/transparent.gif" />
         <dl>
           <dt>name:</dt>
           <dd class="soldier-name">{{name}}</dd>
           <dt>description:</dt>
           <dd>{{description}}</dd>
+          <dt>code-name:</dt>
+          <dd>{{codeName}}</dd>
         </dl>
         <div class="pull-right">
           <a id="hire-{{id}}" soldier-id="{{id}}" class="btn-hire-soldier btn btn-inverse btn-large{{#hired}} disabled{{/hired}}">
@@ -32,7 +34,15 @@
 {{/soldiers}}
 </script>
 <script id="hire-soldier-modal-body-template" type="text/html">
-{{soldierId}}
+<form id="hire-form" action="/hire" data-remote="true">
+  <fieldset>
+    <label>name:</label>
+    <input type="text" disabled value="{{soldierId}}"/>
+    <label>code name:</label>
+    <input type="text" placeholder="alpha3, hammer, fluffy..." id="hire-form-code-name"/>
+    <span class="help-block">While hired for a mission, every soldier must have a code name.</span>
+  </fieldset>
+</form>
 </script>
 </head>
 <body>

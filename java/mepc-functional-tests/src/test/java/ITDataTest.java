@@ -7,6 +7,7 @@ import static org.fest.assertions.Assertions.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
 
 import java.net.URL;
 import java.util.List;
@@ -44,6 +45,7 @@ public class ITDataTest {
 				.content("name", equalTo("Sylvester Stallone")) //
 				.content("description", equalTo("This ex-boxer is a vietnâm veteran that really had a rough.")).and() //
 				.content("hired", equalTo(false)).and() //
+				.content("codeName", nullValue()).and() //
 				.when().get(format("http://%s/data/soldiers.json", getAppHost()));
 	}
 
@@ -55,10 +57,13 @@ public class ITDataTest {
 	}
 
 	@Test
-	public void should_hire_statham() throws Exception {
-		final String hireURL = format("http://%s/data/hire/statham", getAppHost());
+	public void should_hire_statham_as_polka() throws Exception {
+		final String hireURL = format("http://%s/data/hire/statham?codeName=polka", getAppHost());
 		expect().statusCode(SC_OK).when().post(hireURL);
-		expect().body("soldiers.soldiers[0][1].hired", equalTo(true)).when().get("http://{appHost}/data/soldiers.json", getAppHost());
+		expect().root("soldiers.soldiers[0][1]") //
+				.body("hired", equalTo(true)) //
+				.content("codeName", equalTo("polka")) //
+				.when().get("http://{appHost}/data/soldiers.json", getAppHost());
 	}
 
 	@Test

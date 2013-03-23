@@ -72,13 +72,14 @@ public class Soldiers {
 	@POST
 	@Path("hire/{soldierId}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Soldier hireSoldier(@PathParam("soldierId") final String soldierId) {
+	public Soldier hireSoldier(@PathParam("soldierId") final String soldierId, @QueryParam("codeName") String codeName) {
 		Soldier soldierToHire = find(soldiers, Soldier.withId(soldierId));
 		if (soldierToHire.getHired()) {
 			Response error = status(FORBIDDEN).entity(format("Sorry, %s is already hired...", soldierId)).build();
 			throw new WebApplicationException(error);
 		}
 		soldierToHire.setHired(TRUE);
+		soldierToHire.setCodeName(codeName);
 		return soldierToHire;
 	}
 

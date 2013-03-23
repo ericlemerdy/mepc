@@ -27,5 +27,6 @@ public class Soldier {
 	@NonNull
 	public String description;
 	public Boolean hired = Boolean.FALSE;
+	public String codeName;
 
 }
