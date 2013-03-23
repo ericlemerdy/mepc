@@ -8,7 +8,7 @@ body {
 }
 
 .photo {
-	background-image: url("../img/EXPENDABLES-2-LINEUP.jpg");
+	background-image: url("/img/EXPENDABLES-2-LINEUP.jpg");
 	height: 100px;
 	width: 82px;
 	box-shadow: 1px 2px 4px rgba(0, 0, 0, 0.5);
