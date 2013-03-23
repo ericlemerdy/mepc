@@ -1,10 +1,19 @@
 body {
+	background-attachment: fixed;
+	background-image: url('/img/devoxx.png');
+	background-position: center center;
+	background-repeat: no-repeat;
+	background-size: 300px auto;
 	padding-top: 60px;
 	font-family: 'Special Elite', cursive;
 }
 
 #brand {
 	text-transform: uppercase; 
+}
+
+.well {
+	background-color: rgba(233, 233, 233, 0.9);
 }
 
 .photo {
