@@ -21,14 +21,19 @@ def team():
     repo_dir = '/tmp/{}.git'.format(name)
     os.mkdir(repo_dir)
     Repo.init_bare(repo_dir)
-    filename = '{dir}/hooks/post-receive'.format(dir=repo_dir)
-    with open(filename, 'w') as hook:
-      hook.write(render_template('files/post-receive.py', team=name))
-    os.chmod(filename, 0755)
-    redis.lpush('teams', name)
+    hook_name = '{dir}/hooks/post-receive'.format(dir=repo_dir)
+    with open(hook_name, 'w') as hook_file:
+      hook_file.write(render_template('files/post-receive.py', team=name))
+    os.chmod(hook_name, 0755)
+    hacfg_name = '/tmp/{}.cfg'.format(name)
+    with open(hacfg_name, 'w') as hacfg_file:
+      hacfg_file.write(render_template('files/haproxy.cfg', team=name))
+    os.chmod(hacfg_name, 0644)
+    subprocess.call(['authbind', 'haproxy', '-D', '-f', hacfg_name])
+    redis.hmset('teams', {name: 0})
     return redirect(url_for('members', team=name))
   else:
-    teams = redis.lrange('teams', 0, 9999)
+    teams = redis.hkeys('teams')
     teams.sort()
     teams_servers = {}
     for team in teams:
@@ -40,7 +45,6 @@ def team():
         if not teams_servers[team].has_key(env):
           teams_servers[team][env] = {}
         teams_servers[team][env][role] = url[0]
-    print teams_servers
     return render_template('display_teams.html', title=u'Liste des équipes', teams=teams, srvs=teams_servers)
 
 @app.route('/members', methods=['GET', 'POST'])
