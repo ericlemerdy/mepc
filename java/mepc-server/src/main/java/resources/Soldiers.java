@@ -27,7 +27,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.inject.Inject;
 import com.sun.jersey.api.json.JSONWithPadding;
 
-@Path("/data")
+@Path("/")
 public class Soldiers {
 
 	private final List<Soldier> soldiers = newArrayList(

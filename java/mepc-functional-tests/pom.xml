@@ -130,6 +130,10 @@
                   <contextHandlers>
                     <contextHandler implementation="org.eclipse.jetty.webapp.WebAppContext">
                       <contextPath>/</contextPath>
+                      <war>${project.build.directory}/dependency/mepc-static.war</war>
+                    </contextHandler>
+                    <contextHandler implementation="org.eclipse.jetty.webapp.WebAppContext">
+                      <contextPath>/data</contextPath>
                       <war>${project.build.directory}/dependency/mepc-server.war</war>
                     </contextHandler>
                   </contextHandlers>
@@ -158,6 +162,14 @@
                 </goals>
                 <configuration>
                   <artifactItems>
+                    <artifactItem>
+                      <groupId>fr.valtech</groupId>
+                      <artifactId>mepc-static</artifactId>
+                      <version>${project.version}</version>
+                      <type>war</type>
+                      <overWrite>true</overWrite>
+                      <destFileName>mepc-static.war</destFileName>
+                    </artifactItem>
                     <artifactItem>
                       <groupId>fr.valtech</groupId>
                       <artifactId>mepc-server</artifactId>
