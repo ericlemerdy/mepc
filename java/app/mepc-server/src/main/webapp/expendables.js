@@ -1,14 +1,6 @@
 (function() {
-    var dataHost = '';
-
-    var retrieveConfiguration = function() {
-        return $.getJSON('/conf.js', function(data) {
-            dataHost = data.dataHost;
-        });
-    };
-
     var addSoldiers = function() {
-        return $.getJSON('http://' + dataHost + '/data/soldiers.jsonp?callback=?', function(data) {
+        return $.getJSON('/data/soldiers.jsonp?callback=?', function(data) {
             var soldiersTemplate = $('#soldiers-template').html();
             var soldiersHtml = Mustache.render(soldiersTemplate, data);
             $('#soldiers-container').html(soldiersHtml);
@@ -30,7 +22,7 @@
             $('#btn-dialog-hire-soldier').one('click', _.bind(function() {
                 $.ajax({
                     type: 'POST',
-                    url: "http://" + dataHost + "/data/hire/" + this.getAttribute('soldier-id') + "?codeName=" + $('#hire-form-code-name').val(),
+                    url: "/data/hire/" + this.getAttribute('soldier-id') + "?codeName=" + $('#hire-form-code-name').val(),
                     error: function(xhr) { $.error("KO ! You cannot hire that guys" + xhr.status); },
                     success: function(xhr) {
                     	addSoldiers().done(function() {
@@ -48,8 +40,6 @@
     };
 
     $(document).ready(function() {
-        retrieveConfiguration().done(function() {
-            addSoldiers().done(init);
-        });
+        addSoldiers().done(init);
     });
 })();

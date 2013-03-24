@@ -1,4 +1,8 @@
+import static java.lang.Boolean.parseBoolean;
+import static java.lang.String.format;
+import static java.lang.System.getProperty;
 import static org.fest.assertions.fluentlenium.FluentLeniumAssertions.assertThat;
+import static org.junit.Assume.assumeTrue;
 
 import java.util.concurrent.TimeUnit;
 
@@ -7,6 +11,7 @@ import org.fluentlenium.adapter.IsolatedTest;
 import org.fluentlenium.core.Fluent;
 import org.fluentlenium.core.domain.FluentWebElement;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openqa.selenium.WebDriver;
 
@@ -25,6 +30,10 @@ public class ITHomePageTest extends PhantomJsTest {
 	private static final Condition<FluentWebElement> DISABLED = HAS_CLASS("disabled");
 	private static final Condition<FluentWebElement> MUTED = HAS_CLASS("muted");
 
+	private String getAppHost() {
+		return getProperty("fr.valtech.appHost");
+	}
+
 	private Predicate<WebDriver> dialogHidden() {
 		return new Predicate<WebDriver>() {
 			@Override
@@ -34,9 +43,16 @@ public class ITHomePageTest extends PhantomJsTest {
 		};
 	};
 
+	@BeforeClass
+	public static void conf() {
+		System.out.println(format("Data test configuration { apphost: '%s', dev: '%s' }", //
+				getProperty("fr.valtech.appHost"), //
+				getProperty("fr.valtech.dev")));
+	}
+
 	@Before
 	public void createWebTester() {
-		goTo("http://localhost:8080/");
+		goTo(format("http://%s/", getAppHost()));
 		await().atMost(2000, TimeUnit.SECONDS).until(".soldier-name").areDisplayed();
 	}
 
@@ -52,6 +68,8 @@ public class ITHomePageTest extends PhantomJsTest {
 
 	@Test
 	public void should_hire_lundgren() {
+		assumeTrue(parseBoolean(getProperty("fr.valtech.dev", "false")));
+
 		click("#hire-lundgren");
 		await().atMost(2000).until("#btn-dialog-hire-soldier").areDisplayed();
 		fill("#hire-form-code-name").with("Dolphy");
@@ -61,7 +79,7 @@ public class ITHomePageTest extends PhantomJsTest {
 
 		IsolatedTest lundgrenIsHiredForOtherClients = new IsolatedTest(getDriver());
 		Fluent otherClient = lundgrenIsHiredForOtherClients //
-				.goTo("http://localhost:8080/") //
+				.goTo(format("http://%s/", getAppHost())) //
 				.await().atMost(2000, TimeUnit.SECONDS).until(".soldier-name").areDisplayed();
 		assertLundgrenHired(otherClient);
 		lundgrenIsHiredForOtherClients.quit();
