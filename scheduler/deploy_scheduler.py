@@ -9,7 +9,6 @@ import socket
 from jinja2 import Template
 
 class DeployScheduler():
-  envs = ('blue', 'green')
   def __init__(self):
     self.pipeline = ( self.package_app,
                       self.instantiate_infra,
@@ -36,6 +35,9 @@ class DeployScheduler():
       self.template = Template(tpl_content)
     self.envs = map(lambda x: x.lower(), self.redis.lrange('envs', 0, 99))
     self.roles = map(lambda x: x.lower(), self.redis.lrange('roles', 0, 99))
+    self.steps = {}
+    for key, value in self.redis.hgetall('steps').items():
+      self.steps[key] = value.split(':')
 
   def package_app(self, team):
     tmp_dir = tempfile.mkdtemp(prefix=team)
@@ -43,7 +45,7 @@ class DeployScheduler():
     status = subprocess.call(['git', 'clone', '/tmp/mepc/{}.git'.format(team)])
     if status != 0:
       return False
-    os.chdir(team)
+    os.chdir('{}/java'.format(team))
     status = subprocess.call(['mvn', 'clean', 'install'])
     if status != 0:
       return False
@@ -69,7 +71,19 @@ class DeployScheduler():
     return True
   
   def functional_tests(self, team):
-    print 'functional_tests', team
+    env_idx = int(self.redis.hget('teams', team)) % 2
+    target_env = self.envs[env_idx]
+    tmp_dir = tempfile.mkdtemp(prefix=team)
+    os.chdir(tmp_dir)
+    status = subprocess.call(['git', 'clone', '/tmp/mepc/{}.git'.format(team)])
+    if status != 0:
+      return False
+    os.chdir('{}/java'.format(team))
+    status = subprocess.call(['mvn', 'clean', 'install', ' -Dfr.valtech.appHost='])
+    if status != 0:
+      return False
+    os.chdir('/tmp')
+    shutil.rmtree(tmp_dir)
     return True
   
   def switch_env(self, team):
@@ -79,7 +93,7 @@ class DeployScheduler():
       self.send_haproxy_cmd(team, 'set weight {backend}/{env} 1'.format(backend=backend, env=new_env))
     for backend in [tmp+'-back' for tmp in ('web', 'app', 'rdbms', 'nosql')]:
       self.send_haproxy_cmd(team, 'set weight {backend}/{env} 0'.format(backend=backend, env=old_env))
-    self.redis.hset('teams', team, int(self.redis.hget('teams', team))+1)
+    self.redis.hincrby('teams', team, 1)
     return True
 
   def shutdown_infra(self, team):

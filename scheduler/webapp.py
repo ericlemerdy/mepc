@@ -19,6 +19,12 @@ redis.hset('dhcp', 'reserved', '00')
 redis.lpush('roles', 'Application', 'SGBDR', 'Web', 'NoSQL')
 redis.lpush('envs', 'Blue', 'Green')
 
+redis.hmset('steps', {'1.0': 'application'})
+redis.hmset('steps', {'2.0': 'application'})
+redis.hmset('steps', {'3.0': 'application:web'})
+redis.hmset('steps', {'4.0': 'application:web:sgbdr'})
+redis.hmset('steps', {'5.0': 'application:web:sgbdr:nosql'})
+redis.hmset('steps', {'6.0': 'application:web:nosql'})
 
 if os.path.exists('/tmp/mepc'):
   shutil.rmtree('/tmp/mepc')
