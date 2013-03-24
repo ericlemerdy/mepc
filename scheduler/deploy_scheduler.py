@@ -6,6 +6,7 @@ import subprocess
 import shutil
 import urllib
 import socket
+from jinja2 import Template
 
 class DeployScheduler():
   envs = ('blue', 'green')
@@ -30,15 +31,17 @@ class DeployScheduler():
     self.ps = redis.Redis().pubsub()
     self.ps.subscribe('deploy')
     with open('templates/files/Vagrantfile', 'r') as conf_file:
-      self.template = conf_file.read()
+      tpl_content = conf_file.read()
+      self.template = Template(tpl_content)
 
   def package_app(self, team):
     tmp_dir = tempfile.mkdtemp(prefix=team)
     os.chdir(tmp_dir)
-    status = subprocess.call(['git', 'clone', '/tmp/{}.git'.format(team)], shell=True)
+    status = subprocess.call(['git', 'clone', '/tmp/mepc/{}.git'.format(team)])
     if status != 0:
       return False
-    status = subprocess.call(['mvn', 'clean', 'install'], shell=True)
+    os.chdir(team)
+    status = subprocess.call(['mvn', 'clean', 'install'])
     if status != 0:
       return False
     os.chdir('/tmp')
@@ -50,9 +53,11 @@ class DeployScheduler():
     servers = self.teams_servers[team][target_env]
     for role, url in servers.items():
       fqdn = '{env}-{role}'.format(env=target_env, role=role)
-      vagrantfile = self.template(fqdn=fqdn)
-      resp = urllib.urlopen(url, urllib.urlencode({'config': vagrantfile}))
-      if resp.getcode() != 200:
+      vagrantfile = self.template.render(fqdn=fqdn)
+      print 'Launching {role} ({fqdn}) on {url}'.format(role=role, fqdn=fqdn, url=url)
+      resp = urllib.urlopen(url, urllib.urlencode({'config': vagrantfile, 'action': 'up'}))
+      if resp.getcode() > 399:
+        print resp.getcode()
         return False
     return True
   
@@ -70,7 +75,7 @@ class DeployScheduler():
 
   def send_haproxy_cmd(self, team, command):
     sock = socket.socket(socket.AF_UNIX)
-    sock.connect('/tmp/{team}.sock'.format(team=team))
+    sock.connect('/tmp/mepc/{team}.sock'.format(team=team))
     sock.send('{command}\n'.format(command=command))
   
   def start(self):

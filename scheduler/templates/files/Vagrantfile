@@ -6,9 +6,9 @@ Vagrant::Config.run do |config|
 
     config.vm.box_url = "http://127.0.0.1/mepc-lxc/ubuntu_quetzal.box"
   config.ssh.private_key_path = "mepc.pem"
-  config.vm.network :bridged
+  config.vm.network :bridged, :mac => '02000000{{ mac }}'
   config.vm.provision :puppet, 
-                      :facter => {'fqdn' => {{ fqdn }}},
+                      :facter => {'fqdn' => '{{ fqdn }}'},
                       :module_path => 'modules' do |puppet|
     puppet.options = ["--templatedir","/vagrant/templates"]
     puppet.manifests_path = "manifests"
