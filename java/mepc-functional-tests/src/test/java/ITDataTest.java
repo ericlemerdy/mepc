@@ -1,17 +1,22 @@
 import static com.google.common.io.Resources.readLines;
 import static com.jayway.restassured.RestAssured.expect;
+import static java.lang.Boolean.parseBoolean;
 import static java.lang.String.format;
+import static java.lang.System.getProperty;
 import static org.apache.http.HttpStatus.SC_FORBIDDEN;
 import static org.apache.http.HttpStatus.SC_OK;
 import static org.fest.assertions.Assertions.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
+import static org.junit.Assume.assumeTrue;
 
 import java.net.URL;
 import java.util.List;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.google.common.base.Charsets;
@@ -19,7 +24,14 @@ import com.google.common.base.Charsets;
 public class ITDataTest {
 
 	private String getAppHost() {
-		return System.getProperty("fr.valtech.appHost", "localhost:8080");
+		return getProperty("fr.valtech.appHost");
+	}
+
+	@BeforeClass
+	public static void conf() {
+		System.out.println(format("Data test configuration { apphost: '%s', dev: '%s' }", //
+				getProperty("fr.valtech.appHost"), //
+				getProperty("fr.valtech.dev")));
 	}
 
 	@Test
@@ -44,13 +56,15 @@ public class ITDataTest {
 				.content("id", equalTo("stallone")).and() //
 				.content("name", equalTo("Sylvester Stallone")) //
 				.content("description", equalTo("This ex-boxer is a vietnâm veteran that really had a rough.")).and() //
-				.content("hired", equalTo(false)).and() //
+				.content("hired", notNullValue()).and() //
 				.content("codeName", nullValue()).and() //
 				.when().get(format("http://%s/data/soldiers.json", getAppHost()));
 	}
 
 	@Test
 	public void should_not_hire_stallone_twice() throws Exception {
+		assumeTrue(parseBoolean(getProperty("fr.valtech.dev", "false")));
+
 		final String hireURL = format("http://%s/data/hire/stallone", getAppHost());
 		expect().statusCode(SC_OK).when().post(hireURL);
 		expect().statusCode(SC_FORBIDDEN).body(is("Sorry, stallone is already hired...")).when().post(hireURL);
@@ -58,6 +72,8 @@ public class ITDataTest {
 
 	@Test
 	public void should_hire_statham_as_polka() throws Exception {
+		assumeTrue(parseBoolean(getProperty("fr.valtech.dev", "false")));
+
 		final String hireURL = format("http://%s/data/hire/statham?codeName=polka", getAppHost());
 		expect().statusCode(SC_OK).when().post(hireURL);
 		expect().root("soldiers.soldiers[0][1]") //
