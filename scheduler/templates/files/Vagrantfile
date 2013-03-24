@@ -2,9 +2,9 @@
 # vi: set ft=ruby :
 
 Vagrant::Config.run do |config|
-  config.vm.box = "quetzal"
+  config.vm.box = "mepc"
 
-    config.vm.box_url = "http://127.0.0.1/mepc-lxc/ubuntu_quetzal.box"
+#  config.vm.box_url = "http://127.0.0.1/mepc-lxc/ubuntu_quetzal.box"
   config.ssh.private_key_path = "mepc.pem"
   config.vm.network :bridged, :mac => '02000000{{ mac }}'
   config.vm.provision :puppet, 

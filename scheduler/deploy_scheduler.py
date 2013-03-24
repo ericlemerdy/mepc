@@ -14,7 +14,8 @@ class DeployScheduler():
     self.pipeline = ( self.package_app,
                       self.instantiate_infra,
                       self.functional_tests,
-                      self.switch_env)
+                      self.switch_env,
+                      self.shutdown_infra)
     self.redis = redis.Redis()
     teams = self.redis.hkeys('teams')
     teams.sort()
@@ -33,6 +34,8 @@ class DeployScheduler():
     with open('templates/files/Vagrantfile', 'r') as conf_file:
       tpl_content = conf_file.read()
       self.template = Template(tpl_content)
+    self.envs = map(lambda x: x.lower(), self.redis.lrange('envs', 0, 99))
+    self.roles = map(lambda x: x.lower(), self.redis.lrange('roles', 0, 99))
 
   def package_app(self, team):
     tmp_dir = tempfile.mkdtemp(prefix=team)
@@ -49,15 +52,19 @@ class DeployScheduler():
     return True
   
   def instantiate_infra(self, team):
-    target_env = self.envs[int(self.redis.hget('teams', team)) % 2]
+    env_idx = int(self.redis.hget('teams', team)) % 2
+    target_env = self.envs[env_idx]
     servers = self.teams_servers[team][target_env]
+    dhcp_prefix = self.redis.hget('dhcp', team) + str(env_idx)
     for role, url in servers.items():
+      role_idx = str(map(lambda x: x.lower(), self.roles).index(role))
       fqdn = '{env}-{role}'.format(env=target_env, role=role)
-      vagrantfile = self.template.render(fqdn=fqdn)
+      vagrantfile = self.template.render(fqdn=fqdn, mac=dhcp_prefix+role_idx)
       print 'Launching {role} ({fqdn}) on {url}'.format(role=role, fqdn=fqdn, url=url)
       resp = urllib.urlopen(url, urllib.urlencode({'config': vagrantfile, 'action': 'up'}))
       if resp.getcode() > 399:
         print resp.getcode()
+        self.destroy_env(team, target_env)
         return False
     return True
   
@@ -69,11 +76,29 @@ class DeployScheduler():
     new_env = self.envs[int(self.redis.hget('teams', team)) % 2]
     old_env = self.envs[(int(self.redis.hget('teams', team))+1) % 2]
     for backend in [tmp+'-back' for tmp in ('nosql', 'rdbms', 'app', 'web')]:
-      self.send_haproxy_cmd('set weight {backend}/{env} 1'.format(backend=backend, env=new_env))
+      self.send_haproxy_cmd(team, 'set weight {backend}/{env} 1'.format(backend=backend, env=new_env))
     for backend in [tmp+'-back' for tmp in ('web', 'app', 'rdbms', 'nosql')]:
-      self.send_haproxy_cmd('set weight {backend}/{env} 0'.format(backend=backend, env=iold_env))
+      self.send_haproxy_cmd(team, 'set weight {backend}/{env} 0'.format(backend=backend, env=old_env))
+    self.redis.hset('teams', team, int(self.redis.hget('teams', team))+1)
+    return True
+
+  def shutdown_infra(self, team):
+    old_env = self.envs[(int(self.redis.hget('teams', team))) % 2]
+    self.destroy_env(team, old_env)
+    return True
+    
+  def destroy_env(self, team, env):
+    servers = self.teams_servers[team][env]
+    for role, url in servers.items():
+      print 'Destroying {role} on {url}'.format(role=role, url=url)
+      resp = urllib.urlopen(url, urllib.urlencode({'action': 'destroy -f'}))
+      if resp.getcode() > 399:
+        print resp.getcode()
+        return False
+    return True
 
   def send_haproxy_cmd(self, team, command):
+    print team ,'-', command
     sock = socket.socket(socket.AF_UNIX)
     sock.connect('/tmp/mepc/{team}.sock'.format(team=team))
     sock.send('{command}\n'.format(command=command))

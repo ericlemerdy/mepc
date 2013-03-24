@@ -11,6 +11,14 @@ app = Flask(__name__)
 redis = Redis(app)
 redis.delete('teams')
 redis.delete('servers')
+redis.delete('dhcp')
+redis.delete('roles')
+redis.delete('envs')
+
+redis.hset('dhcp', 'reserved', '00')
+redis.lpush('roles', 'Application', 'SGBDR', 'Web', 'NoSQL')
+redis.lpush('envs', 'Blue', 'Green')
+
 
 if os.path.exists('/tmp/mepc'):
   shutil.rmtree('/tmp/mepc')
@@ -18,7 +26,19 @@ os.mkdir('/tmp/mepc')
 
 @app.route('/')
 def index():
-  return render_template('register_team.html', title=u'Enregistrez votre équipe')
+  teams = redis.hkeys('teams')
+  teams.sort()
+  teams_servers = {}
+  for team in teams:
+    teams_servers[team] = {}
+    servers = redis.hkeys(team)
+    for server in servers:
+      url = redis.hmget(team, server)
+      env, role = server.split(':')
+      if not teams_servers[team].has_key(env):
+        teams_servers[team][env] = {}
+      teams_servers[team][env][role] = url[0]
+  return render_template('display_teams.html', title=u'Liste des équipes', teams=teams, srvs=teams_servers)
 
 @app.route('/team', methods=['GET', 'POST'])
 def team():
@@ -27,6 +47,8 @@ def team():
     repo_dir = '/tmp/mepc/{}.git'.format(name)
     os.mkdir(repo_dir)
     Repo.init_bare(repo_dir)
+    for r, d, f in os.walk(repo_dir):
+      os.chmod(r, 0777)
     hook_name = '{dir}/hooks/post-receive'.format(dir=repo_dir)
     with open(hook_name, 'w') as hook_file:
       hook_file.write(render_template('files/post-receive.py', team=name))
@@ -36,27 +58,18 @@ def team():
       hacfg_file.write(render_template('files/haproxy.cfg', team=name))
     os.chmod(hacfg_name, 0644)
     subprocess.call(['/usr/sbin/haproxy', '-D', '-f', hacfg_name])
+    os.chmod('/tmp/mepc/{}.sock'.format(name), 0777)
+    dhcp = '0{}'.format(max(map(lambda x: int(x), redis.hvals('dhcp')))+1)
+    redis.hmset('dhcp', {name: dhcp})
     redis.hmset('teams', {name: 0})
     return redirect(url_for('members', team=name))
   else:
-    teams = redis.hkeys('teams')
-    teams.sort()
-    teams_servers = {}
-    for team in teams:
-      teams_servers[team] = {}
-      servers = redis.hkeys(team)
-      for server in servers:
-        url = redis.hmget(team, server)
-        env, role = server.split(':')
-        if not teams_servers[team].has_key(env):
-          teams_servers[team][env] = {}
-        teams_servers[team][env][role] = url[0]
-    return render_template('display_teams.html', title=u'Liste des équipes', teams=teams, srvs=teams_servers)
+    return render_template('register_team.html', title=u'Enregistrez votre équipe')
 
 @app.route('/members', methods=['GET', 'POST'])
 def members():
-  servers = ('Application', 'SGBDR', 'Web', 'NoSQL')
-  envs = ('Blue', 'Green')
+  servers = redis.lrange('roles', 0, 99)
+  envs = redis.lrange('envs', 0, 99)
   if request.method == 'GET':
     team = request.args.get('team', None)
     if not team:
