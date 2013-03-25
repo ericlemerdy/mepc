@@ -48,20 +48,22 @@ class DeployScheduler():
       self.steps[key] = value.split(':')
 
   def package_app(self, team):
-    tmp_dir = tempfile.mkdtemp(prefix=team)
-    os.chdir(tmp_dir)
-    status = subprocess.call(['git', 'clone', '/tmp/mepc/{}.git'.format(team)])
-    if status != 0:
-      return False
-    os.chdir('{}'.format(team))
-    status = subprocess.call(['mvn', 'clean', 'install', '-DskipTests=true'])
-    if status != 0:
-      return False
-    self.version = self.get_pom_version('mepc-server')
-    shutil.copy('mepc-server/target/mepc-server-{}.war'.format(self.version), '/tmp/mepc/web/{}'.format(team))
-    os.chdir('/tmp')
-    shutil.rmtree(tmp_dir)
-    return True
+    try:
+      tmp_dir = tempfile.mkdtemp(prefix=team)
+      os.chdir(tmp_dir)
+      status = subprocess.call(['git', 'clone', '/tmp/mepc/{}.git'.format(team)])
+      if status != 0:
+        return False
+      os.chdir('{}'.format(team))
+      status = subprocess.call(['mvn', 'clean', 'install', '-DskipTests=true'])
+      if status != 0:
+        return False
+      self.version = self.get_pom_version('mepc-server')
+      shutil.copy('mepc-server/target/mepc-server-{}.war'.format(self.version), '/tmp/mepc/web/{}'.format(team))
+      os.chdir('/tmp')
+      return True
+    finally:
+      shutil.rmtree(tmp_dir)
   
   def instantiate_infra(self, team):
     env_idx = int(self.redis.hget('teams', team)) % 2
@@ -81,20 +83,22 @@ class DeployScheduler():
     return True
   
   def functional_tests(self, team):
-    env_idx = int(self.redis.hget('teams', team)) % 2
-    target_env = self.envs[env_idx]
-    tmp_dir = tempfile.mkdtemp(prefix=team)
-    os.chdir(tmp_dir)
-    status = subprocess.call(['git', 'clone', '/tmp/mepc/{}.git'.format(team)])
-    if status != 0:
-      return False
-    os.chdir('{}/mepc-functional-tests'.format(team))
-    status = subprocess.call(['mvn', 'clean', 'install', ' -Dfr.valtech.appHost='])
-    if status != 0:
-      return False
-    os.chdir('/tmp')
-    shutil.rmtree(tmp_dir)
-    return True
+    try:
+      env_idx = int(self.redis.hget('teams', team)) % 2
+      target_env = self.envs[env_idx]
+      tmp_dir = tempfile.mkdtemp(prefix=team)
+      os.chdir(tmp_dir)
+      status = subprocess.call(['git', 'clone', '/tmp/mepc/{}.git'.format(team)])
+      if status != 0:
+        return False
+      os.chdir('{}/mepc-functional-tests'.format(team))
+      status = subprocess.call(['mvn', 'clean', 'install', ' -Dfr.valtech.appHost='])
+      if status != 0:
+        return False
+      os.chdir('/tmp')
+      return True
+    finally:
+      shutil.rmtree(tmp_dir)
   
   def switch_env(self, team):
     new_env = self.envs[int(self.redis.hget('teams', team)) % 2]
