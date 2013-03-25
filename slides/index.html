@@ -53,6 +53,9 @@ body {
   background-position: left 0px top -75px, left 0px bottom -35px;
   background-repeat: no-repeat;
 }
+.slide .reveal .slides .stack .present pre code {
+  max-height: 500px;
+}
 </style>
 </head>
 <body>
@@ -108,6 +111,10 @@ body {
       <section data-state="slide">
         <h2>Qu'est-ce-que Puppet ?</h2>
         <p>Un programme de gestion de configuration système d'un ensemble de machines.</p>
+        <div class="fragment">
+          <img src="assets/wall_e_pod_hires.jpg" />
+          <small>Photo credit: <a href="http://andrewsidea.wordpress.com/2008/07/01/wall-e/">Wall-E</a></small>
+        </div>
       </section>
       <section>
         <section data-state="slide">
@@ -131,7 +138,6 @@ body {
           <h4>site.pp</h4>
           <pre><code class="ruby">
 import "nodes"
-import "defines"
   
 Exec { path => "/usr/bin:/usr/sbin/:/bin:/sbin" }
   
@@ -141,9 +147,6 @@ case $operatingsystem {
   }
   Redhat: {
       Package { provider => up2date }
-  }
-  Debian: {
-      Package { provider => aptitude }
   }
   default: {
       Package { provider => aptitude }
@@ -155,24 +158,19 @@ case $operatingsystem {
           <h2>À quoi ça ressemble ? 3/4</h2>
           <h4>nodes.pp</h4>
           <pre><code class="ruby">
-class urbandivesnap-default-node {
-  include base-module
-}
-class urbandivesnap-FO-Cache-V3-node {
-  include ud-base-sec-module
-  include ud-fo-cachev3-module
-}
-class urbandivesnap-FO-Solr-node {
-  include ud-fo-solr-module
+node frontal-001 {
+  include default-class
+  include nginx-class
 }
 
-node snap-ud-fo-cache-001 {
-  include urbandivesnap-default-node
-  include urbandivesnap-FO-Cache-V3-node
+node backend-001, backend-002 {
+  include default-class
+  include tomcat-class
 }
-node snap-ud-fo-solr-001, snap-ud-fo-solr-002 {
-  include urbandivesnap-default-node
-  include urbandivesnap-FO-Solr-node
+
+node /(blue|green)?-db/ {
+  include default-class
+  include mongo-class
 }
           </code></pre>
         </section>
@@ -180,23 +178,23 @@ node snap-ud-fo-solr-001, snap-ud-fo-solr-002 {
           <h2>À quoi ça ressemble ? 4/4</h2>
           <h4>init.pp</h4>
           <pre><code class="ruby">
-class ud-fo-solr-module {
-  file { "/etc/sysctl.conf":
+class tomcat-class {
+  file { "/etc/default/tomcat":
     ensure  => present,
     owner   => root,
     group   => root,
     mode    => 644,
-    source  => "puppet:///ud-fo-solr-module/sysctl.conf",
+    source  => "puppet:///tomcat-class/etc/default/tomcat",
+    require => Package["tomcat6"],
   }
-  exec { "Reload /etc/sysctl.conf":
-    command     => "/sbin/sysctl -p /etc/sysctl.conf",
-    refreshonly => true,
-    subscribe   => File["/etc/sysctl.conf"],
-    require     => File["/etc/sysctl.conf"],
+  exec { "Download manager":
+    command => "wget http://exemple.org/manager.war",
+    cwd     => "/var/lib/tomcat6",
+    creates => "/var/lib/tomcat6/manager.war",
+    require => Package["tomcat6"],
   }
-  package { "s3cmd":
+  package { "tomcat6":
     ensure  => installed,
-    require => Exec['Reload apt'],
   }
 }
           </code></pre>
@@ -210,12 +208,12 @@ class ud-fo-solr-module {
       <section data-state="slide">
         <h2>Installation</h2>
         <p>Tout est là !</p>
-        <p><a href="http://filer">http://filer</a></p>
+        <p><a href="http://filer/" target="_blank">http://filer/</a></p>
         <ul>
-          <li>VirtualBox</li>
-          <li>Vagrant</li>
-          <li>Vagrantfile</li>
-          <li>Vagrant base box</li>
+          <li>VirtualBox</dt>
+          <li>Vagrant</dt>
+          <li>Vagrantfile</dt>
+          <li>Vagrant base box : <code>mepc.box</code></li>
         </ul>
       </section>
       <section>
