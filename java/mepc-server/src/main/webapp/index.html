@@ -34,6 +34,7 @@
 {{/soldiers}}
 </script>
 <script id="hire-soldier-modal-body-template" type="text/html">
+<div id="hire-soldier-error-placeholder"></div>
 <form id="hire-form" action="/hire" data-remote="true">
   <fieldset>
     <label>name:</label>
@@ -43,6 +44,12 @@
     <span class="help-block">While hired for a mission, every soldier must have a code name.</span>
   </fieldset>
 </form>
+</script>
+<script id="hire-soldier-error-template" type="text/html">
+<div id="hire-soldier-error-alert" class="alert alert-error">
+  <a data-dismiss="alert" class="close">×</a>
+  {{message}}
+</div>
 </script>
 </head>
 <body>
@@ -82,7 +89,7 @@
     </div>
     <div class="modal-body" id="hire-soldier-modal-body"></div>
     <div class="modal-footer">
-      <button class="btn" data-dismiss="modal">Cancel</button>
+      <button id="btn-dialog-hire-soldier-cancel" class="btn" data-dismiss="modal">Cancel</button>
       <button id="btn-dialog-hire-soldier" class="btn btn-primary">Hire</button>
     </div>
   </div>

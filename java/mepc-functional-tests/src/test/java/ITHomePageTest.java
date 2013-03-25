@@ -43,6 +43,15 @@ public class ITHomePageTest extends PhantomJsTest {
 		};
 	};
 
+	private Predicate<WebDriver> alertDisplayed() {
+		return new Predicate<WebDriver>() {
+			@Override
+			public boolean apply(WebDriver input) {
+				return findFirst("#hire-soldier-error-alert").isDisplayed();
+			}
+		};
+	};
+
 	@BeforeClass
 	public static void conf() {
 		System.out.println(format("Data test configuration { apphost: '%s', dev: '%s' }", //
@@ -64,6 +73,18 @@ public class ITHomePageTest extends PhantomJsTest {
 	@Test
 	public void should_display_stallone() {
 		assertThat(find(".soldier-name")).hasText("Sylvester Stallone");
+	}
+
+	@Test
+	public void should_not_hire_chuck_norris() {
+		click("#hire-norris");
+		await().atMost(2000).until("#btn-dialog-hire-soldier").areDisplayed();
+		click("#btn-dialog-hire-soldier");
+		await().atMost(2000).until(alertDisplayed());
+		assertThat(findFirst("#hire-soldier-error-alert")).hasText("Forbidden : You can never hire chuck norris because chuck norris hired you...");
+		click("#btn-dialog-hire-soldier-cancel");
+		await().atMost(2000).until(dialogHidden());
+		assertThat(findFirst("#hire-norris")).isDisplayed();
 	}
 
 	@Test
