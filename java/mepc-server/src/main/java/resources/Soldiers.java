@@ -22,6 +22,10 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
+import org.hibernate.classic.Session;
+
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.Inject;
@@ -29,8 +33,7 @@ import com.sun.jersey.api.json.JSONWithPadding;
 
 @Path("/")
 public class Soldiers {
-
-	private final List<Soldier> soldiers = newArrayList(
+	private final List<Soldier> soldiersDeprecated = newArrayList(
 			new Soldier("stallone", "Sylvester Stallone", "This ex-boxer is a vietnâm veteran that really had a rough."), //
 			new Soldier("statham", "Jason Statham", "Kickboxing expert, body-to-body, it leaves no chance to your enemies."), //
 			new Soldier("li", "Jet Li", "Do not be fooled by its size, this man can send you to the mat quickly thanks to its speed."), //
@@ -43,15 +46,22 @@ public class Soldiers {
 					"Arnold Schwarzenegger",
 					"When you're born in the Austrian mountains and you carries the milk down to the valley, you are getting stronger... If you hire him, he will be back."));
 
+	private SessionFactory sessionFactory;
+
 	@Inject
-	public Soldiers() {
+	public Soldiers(SessionFactory sessionFactory) {
+		this.sessionFactory = sessionFactory;
+	}
+
+	private List<Soldier> allDbSoldiers() {
+		return sessionFactory.openSession().createQuery("from Soldier").list();
 	}
 
 	@GET
 	@Path("soldiers.json")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Map<String, List<ThreeSoldiers>> allSoldiers() {
-		final List<List<Soldier>> partition = partition(soldiers, 3);
+		final List<List<Soldier>> partition = partition(allDbSoldiers(), 3);
 		final List<ThreeSoldiers> threeSoldiers = newArrayList(transform(partition, new Function<List<Soldier>, ThreeSoldiers>() {
 			@Override
 			public ThreeSoldiers apply(final List<Soldier> input) {
@@ -73,13 +83,21 @@ public class Soldiers {
 	@Path("hire/{soldierId}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Soldier hireSoldier(@PathParam("soldierId") final String soldierId, @QueryParam("codeName") String codeName) {
-		Soldier soldierToHire = find(soldiers, Soldier.withId(soldierId));
+		Soldier soldierToHire = find(allDbSoldiers(), Soldier.withId(soldierId));
 		if (soldierToHire.getHired()) {
 			Response error = status(FORBIDDEN).entity(format("Sorry, %s is already hired...", soldierId)).build();
 			throw new WebApplicationException(error);
 		}
 		soldierToHire.setHired(TRUE);
 		soldierToHire.setCodeName(codeName);
+		Session session = sessionFactory.openSession();
+		try {
+			Transaction transaction = session.beginTransaction();
+			session.update(soldierToHire);
+			transaction.commit();
+		} finally {
+			session.close();
+		}
 		return soldierToHire;
 	}
 

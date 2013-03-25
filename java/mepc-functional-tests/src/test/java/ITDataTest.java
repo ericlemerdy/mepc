@@ -16,6 +16,8 @@ import static org.junit.Assume.assumeTrue;
 import java.net.URL;
 import java.util.List;
 
+import org.hsqldb.server.Server;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -23,8 +25,24 @@ import com.google.common.base.Charsets;
 
 public class ITDataTest {
 
+	private static Server server;
+
 	private String getAppHost() {
 		return getProperty("fr.valtech.appHost");
+	}
+
+	@BeforeClass
+	public static void startHsqlDB() {
+		server = new Server();
+		server.setAddress("localhost");
+		server.setDatabaseName(0, "");
+		server.setDatabasePath(0, "file:target/test");
+		server.start();
+	}
+
+	@AfterClass
+	public static void stopHsqlDB() {
+		server.stop();
 	}
 
 	@BeforeClass

@@ -1,5 +1,9 @@
 package resources;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -10,6 +14,8 @@ import com.google.common.base.Predicate;
 @Data
 @NoArgsConstructor
 @RequiredArgsConstructor
+@Entity
+@Table(name = "SOLDIER")
 public class Soldier {
 	public static final Predicate<Soldier> withId(final String soldierId) {
 		return new Predicate<Soldier>() {
@@ -20,6 +26,7 @@ public class Soldier {
 		};
 	}
 
+	@Id
 	@NonNull
 	public String id;
 	@NonNull

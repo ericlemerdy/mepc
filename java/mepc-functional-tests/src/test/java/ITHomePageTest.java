@@ -10,6 +10,8 @@ import org.fest.assertions.Condition;
 import org.fluentlenium.adapter.IsolatedTest;
 import org.fluentlenium.core.Fluent;
 import org.fluentlenium.core.domain.FluentWebElement;
+import org.hsqldb.Server;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -18,6 +20,8 @@ import org.openqa.selenium.WebDriver;
 import com.google.common.base.Predicate;
 
 public class ITHomePageTest extends PhantomJsTest {
+	private static Server server;
+
 	private static final Condition<FluentWebElement> HAS_CLASS(final String classname) {
 		return new Condition<FluentWebElement>("has class " + classname) {
 			@Override
@@ -26,6 +30,20 @@ public class ITHomePageTest extends PhantomJsTest {
 			}
 		};
 	};
+
+	@BeforeClass
+	public static void startHsqlDB() {
+		server = new Server();
+		server.setAddress("localhost");
+		server.setDatabaseName(0, "");
+		server.setDatabasePath(0, "file:target/test");
+		server.start();
+	}
+
+	@AfterClass
+	public static void stopHsqlDB() {
+		server.stop();
+	}
 
 	private static final Condition<FluentWebElement> DISABLED = HAS_CLASS("disabled");
 	private static final Condition<FluentWebElement> MUTED = HAS_CLASS("muted");
