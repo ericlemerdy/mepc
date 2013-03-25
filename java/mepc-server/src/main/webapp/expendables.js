@@ -19,11 +19,20 @@
             $('#hire-soldier-dialog').modal();
 
             $('#btn-dialog-hire-soldier').off('click'); // Remove previous listener if any
-            $('#btn-dialog-hire-soldier').one('click', _.bind(function() {
+            $('#btn-dialog-hire-soldier').on('click', _.bind(function() {
                 $.ajax({
                     type: 'POST',
                     url: "/data/hire/" + this.getAttribute('soldier-id') + "?codeName=" + $('#hire-form-code-name').val(),
-                    error: function(xhr) { $.error("KO ! You cannot hire that guys" + xhr.status); },
+                    error: function(xhr, textStatus, errorThrown) {
+                    	addSoldiers().done(function() {
+                    		init();
+	                    	var template = $('#hire-soldier-error-template').html();
+	                        var data = { 'message': xhr.statusText + " : " + xhr.responseText };
+	                        var errorMessage = Mustache.render(template, data);
+	                        $('#hire-soldier-error-placeholder').html(errorMessage);
+	                    	console.log(xhr);
+                    	});
+                    },
                     success: function(xhr) {
                     	addSoldiers().done(function() {
                     		init();
