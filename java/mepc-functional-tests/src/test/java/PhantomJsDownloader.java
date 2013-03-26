@@ -28,34 +28,42 @@ class PhantomJsDownloader {
 	public File downloadAndExtract() {
 		File installDir = new File(".phantomjstest");
 
-		String url;
+		String url, fallbackUrl;
 		File phantomJsExe;
 		if (isWindows) {
 			url = "http://phantomjs.googlecode.com/files/phantomjs-1.8.1-windows.zip";
+			fallbackUrl = "http://filer/phantomjs/phantomjs-1.8.1-windows.zip";
 			phantomJsExe = new File(installDir, "phantomjs-1.8.1-windows/phantomjs.exe");
 		} else if (isMac) {
 			url = "http://phantomjs.googlecode.com/files/phantomjs-1.8.1-macosx.zip";
+			fallbackUrl = "http://filer/phantomjs/phantomjs-1.8.1-macosx.zip";
 			phantomJsExe = new File(installDir, "phantomjs-1.8.1-macosx/bin/phantomjs");
 		} else if (isLinux64) {
 			url = "http://phantomjs.googlecode.com/files/phantomjs-1.8.1-linux-x86_64.tar.bz2";
+			fallbackUrl = "http://filer/phantomjs/phantomjs-1.8.1-linux-x86_64.tar.bz2";
 			phantomJsExe = new File(installDir, "phantomjs-1.8.1-linux-x86_64/bin/phantomjs");
 		} else {
 			url = "http://phantomjs.googlecode.com/files/phantomjs-1.8.1-linux-i686.tar.bz2";
+			fallbackUrl = "http://filer/phantomjs/phantomjs-1.8.1-linux-i686.tar.bz2";
 			phantomJsExe = new File(installDir, "phantomjs-1.8.1-linux-i686/bin/phantomjs");
 		}
 
-		extractExe(url, installDir, phantomJsExe);
+		extractExe(url, fallbackUrl, installDir, phantomJsExe);
 
 		return phantomJsExe;
 	}
 
-	private void extractExe(String url, File phantomInstallDir, File phantomJsExe) {
+	private void extractExe(String url, String fallbackUrl, File phantomInstallDir, File phantomJsExe) {
 		if (phantomJsExe.exists()) {
 			return;
 		}
 
 		File targetZip = new File(phantomInstallDir, "phantomjs.zip");
-		downloadZip(url, targetZip);
+		try {
+			downloadZip(url, targetZip);
+		} catch (IllegalStateException e) {
+			downloadZip(fallbackUrl, targetZip);
+		}
 
 		System.out.println("Extracting phantomjs");
 		try {
@@ -87,7 +95,9 @@ class PhantomJsDownloader {
 
 			ByteStreams.copy(input, ouput);
 		} catch (IOException e) {
-			throw new IllegalStateException("Unable to download phantomjs from " + url);
+			String message = "Unable to download phantomjs from " + url;
+			System.out.println(message);
+			throw new IllegalStateException(message);
 		}
 
 		zipTemp.renameTo(targetZip);
