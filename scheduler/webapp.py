@@ -14,21 +14,25 @@ redis.delete('servers')
 redis.delete('dhcp')
 redis.delete('roles')
 redis.delete('envs')
+redis.delete('steps')
 
 redis.hset('dhcp', 'reserved', '00')
 redis.lpush('roles', 'Application', 'SGBDR', 'Web', 'NoSQL')
 redis.lpush('envs', 'Blue', 'Green')
 
-redis.hmset('steps', {'1.0': 'application'})
-redis.hmset('steps', {'2.0': 'application'})
-redis.hmset('steps', {'3.0': 'application:web'})
-redis.hmset('steps', {'4.0': 'application:web:sgbdr'})
-redis.hmset('steps', {'5.0': 'application:web:sgbdr:nosql'})
-redis.hmset('steps', {'6.0': 'application:web:nosql'})
+redis.hmset('steps', {'1': 'application'})
+redis.hmset('steps', {'2': 'application'})
+redis.hmset('steps', {'3': 'application:web'})
+redis.hmset('steps', {'4': 'application:web:sgbdr'})
+redis.hmset('steps', {'5': 'application:web:sgbdr:nosql'})
+redis.hmset('steps', {'6': 'application:web:nosql'})
 
 if os.path.exists('/tmp/mepc'):
   shutil.rmtree('/tmp/mepc')
 os.mkdir('/tmp/mepc')
+os.chmod('/tmp/mepc', 0777)
+os.mkdir('/tmp/mepc/web')
+os.chmod('/tmp/mepc/web', 0777)
 
 @app.route('/')
 def index():
@@ -59,12 +63,6 @@ def team():
     with open(hook_name, 'w') as hook_file:
       hook_file.write(render_template('files/post-receive.py', team=name))
     os.chmod(hook_name, 0755)
-    hacfg_name = '/tmp/mepc/{}.cfg'.format(name)
-    with open(hacfg_name, 'w') as hacfg_file:
-      hacfg_file.write(render_template('files/haproxy.cfg', team=name))
-    os.chmod(hacfg_name, 0644)
-    subprocess.call(['/usr/sbin/haproxy', '-D', '-f', hacfg_name])
-    os.chmod('/tmp/mepc/{}.sock'.format(name), 0777)
     dhcp = '0{}'.format(max(map(lambda x: int(x), redis.hvals('dhcp')))+1)
     redis.hmset('dhcp', {name: dhcp})
     redis.hmset('teams', {name: 0})
