@@ -57,12 +57,11 @@ class DhcpConfig():
   
   def start(self):
     print 'Starting isc-dhcp'
-    subprocess.call(['/usr/sbin/dhcpd', '-f', '-cf', '/tmp/mepc/dhcp.cfg', 'eth0'])
+    subprocess.call(['/usr/sbin/dhcpd', '-f', '-cf', '/tmp/mepc/dhcp.cfg', 'vboxnet0'])
     print 'Stopping isc-dhcp'
     
 class DnsConfig():
   def __init__(self, teams):
-    self.teams = teams
     redis_conn = redis.Redis()
     dhcp_prefixes = redis_conn.hgetall('dhcp')
     self.dnscfg_name = '/tmp/mepc/db.mepc.lan'
@@ -71,12 +70,13 @@ class DnsConfig():
       for env in ('blue', 'green'):
         for host_id, host in enumerate(('web', 'app', 'db', 'nosql')):
           servers['{team}-{env}-{host}'.format(team=team, env=env, host=host)] = '10.3.{prefix}.{host_id}'.format(prefix=int(prefix), host_id=host_id+1)
+      servers['{team}-puppet'.format(team=team)] = '10.3.{prefix}.9'.format(prefix=int(prefix))
     with open('templates/files/dns.zone', 'r') as conf_file:
       tpl_content = conf_file.read()
       dns_tpl = Template(tpl_content)
       dnscfg_name = '/tmp/mepc/db.mepc.lan'
       with open(dnscfg_name, 'w') as dnscfg_file:
-        dnscfg_file.write(dns_tpl.render(servers=servers))
+        dnscfg_file.write(dns_tpl.render(servers=servers, teams=teams))
   
   def start(self):
     print 'Starting named'
@@ -121,6 +121,7 @@ class DeployScheduler():
       self.servers[env][role] = url[0]
     self.ps = redis.Redis().pubsub()
     self.ps.subscribe('deploy')
+    self.dhcp_prefix = self.redis.hget('dhcp', team)
     with open('templates/files/Vagrantfile', 'r') as conf_file:
       tpl_content = conf_file.read()
       self.template = Template(tpl_content)
@@ -134,11 +135,11 @@ class DeployScheduler():
     try:
       tmp_dir = tempfile.mkdtemp(prefix=self.team)
       os.chdir(tmp_dir)
-      status = subprocess.call(['git', 'clone', '/tmp/mepc/{}.git'.format(self.team)])
+      status = subprocess.call(['git', 'clone', '/tmp/mepc/{}.git'.format(self.team)], stderr=self.logs, stdout=self.logs)
       if status != 0:
         return False
       os.chdir('{}'.format(self.team))
-      status = subprocess.call(['mvn', 'clean', 'install', '-DskipTests=true'])
+      status = subprocess.call(['mvn', 'clean', 'install', '-DskipTests=true'], stderr=self.logs, stdout=self.logs)
       if status != 0:
         return False
       self.version = self.get_pom_version('mepc-server')
@@ -158,7 +159,7 @@ class DeployScheduler():
       if role in current_roles:
         role_idx = str(map(lambda x: x.lower(), self.roles).index(role))
         fqdn = '{env}-{role}'.format(env=target_env, role=role)
-        vagrantfile = self.template.render(fqdn=fqdn, mac=dhcp_prefix+role_idx)
+        vagrantfile = self.template.render(fqdn=fqdn, mac=dhcp_prefix+role_idx, puppetmaster='{}-puppet'.format(self.team))
         print 'Launching {role} ({fqdn}) on {url}'.format(role=role, fqdn=fqdn, url=url)
         resp = urllib.urlopen(url, urllib.urlencode({'config': vagrantfile, 'action': 'up'}))
         if resp.getcode() > 399:
@@ -166,15 +167,15 @@ class DeployScheduler():
           self.destroy_env(target_env)
           return False
     if 'web' in current_roles:
-      self.send_haproxy_cmd(self.team, 'set weight blue-back/web 1')
-      self.send_haproxy_cmd(self.team, 'set weight green-back/web 1')
-      self.send_haproxy_cmd(self.team, 'set weight blue-back/app 0')
-      self.send_haproxy_cmd(self.team, 'set weight green-back/app 0')
+      self.send_haproxy_cmd('set weight blue-back/web 1')
+      self.send_haproxy_cmd('set weight green-back/web 1')
+      self.send_haproxy_cmd('set weight blue-back/app 0')
+      self.send_haproxy_cmd('set weight green-back/app 0')
     else:
-      self.send_haproxy_cmd(self.team, 'set weight blue-back/app 1')
-      self.send_haproxy_cmd(self.team, 'set weight green-back/app 1')
-      self.send_haproxy_cmd(self.team, 'set weight blue-back/web 0')
-      self.send_haproxy_cmd(self.team, 'set weight green-back/web 0')
+      self.send_haproxy_cmd('set weight blue-back/app 1')
+      self.send_haproxy_cmd('set weight green-back/app 1')
+      self.send_haproxy_cmd('set weight blue-back/web 0')
+      self.send_haproxy_cmd('set weight green-back/web 0')
     return True
   
   def functional_tests(self):
@@ -187,7 +188,7 @@ class DeployScheduler():
       if status != 0:
         return False
       os.chdir('{}/mepc-functional-tests'.format(self.team))
-      status = subprocess.call(['mvn', 'clean', 'install', '-Dfr.valtech.appHost=127.0.0.1:8{env}{dhcp}'.format(env=env_idx+1, dhcp=self.dhcp_prefix)])
+      status = subprocess.call(['mvn', 'clean', 'install', '-Dfr.valtech.appHost=127.0.0.1:8{env}{dhcp}'.format(env=env_idx+1, dhcp=self.dhcp_prefix)], stderr=self.logs, stdout=self.logs)
       if status != 0:
         self.destroy_env(target_env)
         return False
@@ -200,9 +201,9 @@ class DeployScheduler():
     new_env = self.envs[int(self.redis.hget('teams', self.team)) % 2]
     old_env = self.envs[(int(self.redis.hget('teams', self.team))+1) % 2]
     for backend in [tmp+'-back' for tmp in ('nosql', 'rdbms', 'app', 'web')]:
-      self.send_haproxy_cmd(self.team, 'set weight {backend}/{env} 1'.format(backend=backend, env=new_env))
+      self.send_haproxy_cmd('set weight {backend}/{env} 1'.format(backend=backend, env=new_env))
     for backend in [tmp+'-back' for tmp in ('web', 'app', 'rdbms', 'nosql')]:
-      self.send_haproxy_cmd(self.team, 'set weight {backend}/{env} 0'.format(backend=backend, env=old_env))
+      self.send_haproxy_cmd('set weight {backend}/{env} 0'.format(backend=backend, env=old_env))
     self.redis.hincrby('teams', self.team, 1)
     return True
 
@@ -238,11 +239,13 @@ class DeployScheduler():
       for message in self.ps.listen():
         if message['type'] == 'message':
           team = message['data']
-          successful_steps = 0
-          for step in self.pipeline:
-            if not step(team):
-              break
-            successful_steps += 1
+          if team == self.team:
+            self.logs = open('/tmp/mepc/logs/{}.log'.format(team), 'w')
+            successful_steps = 0
+            for step in self.pipeline:
+              if not step():
+                break
+              successful_steps += 1
     except:
       import traceback
       traceback.print_exc()
@@ -261,11 +264,13 @@ if __name__ == '__main__':
   conn = redis.Redis()
   teams = conn.hkeys('teams')
   processes = {'global': []}
+  if not os.path.exists('/tmp/mepc/logs'):
+    os.mkdir('/tmp/mepc/logs')
   for team in teams:
     processes[team] = []
-    
     for service in (HaproxyTeam, DeployScheduler):
       start_service(service, False, team)
+
   start_service(NginxConfig, True, teams)
   start_service(DhcpConfig, True, teams)
   start_service(DnsConfig, True, teams)
