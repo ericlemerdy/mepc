@@ -32,19 +32,19 @@ class PhantomJsDownloader {
 		File phantomJsExe;
 		if (isWindows) {
 			url = "http://phantomjs.googlecode.com/files/phantomjs-1.8.1-windows.zip";
-			fallbackUrl = "http://filer/phantomjs-1.8.1-windows.zip";
+			fallbackUrl = "http://filer/phantomjs/phantomjs-1.8.1-windows.zip";
 			phantomJsExe = new File(installDir, "phantomjs-1.8.1-windows/phantomjs.exe");
 		} else if (isMac) {
 			url = "http://phantomjs.googlecode.com/files/phantomjs-1.8.1-macosx.zip";
-			fallbackUrl = "http://filer/phantomjs-1.8.1-macosx.zip";
+			fallbackUrl = "http://filer/phantomjs/phantomjs-1.8.1-macosx.zip";
 			phantomJsExe = new File(installDir, "phantomjs-1.8.1-macosx/bin/phantomjs");
 		} else if (isLinux64) {
 			url = "http://phantomjs.googlecode.com/files/phantomjs-1.8.1-linux-x86_64.tar.bz2";
-			fallbackUrl = "http://filer/phantomjs-1.8.1-linux-x86_64.tar.bz2";
+			fallbackUrl = "http://filer/phantomjs/phantomjs-1.8.1-linux-x86_64.tar.bz2";
 			phantomJsExe = new File(installDir, "phantomjs-1.8.1-linux-x86_64/bin/phantomjs");
 		} else {
 			url = "http://phantomjs.googlecode.com/files/phantomjs-1.8.1-linux-i686.tar.bz2";
-			fallbackUrl = "http://filer/phantomjs-1.8.1-linux-i686.tar.bz2";
+			fallbackUrl = "http://filer/phantomjs/phantomjs-1.8.1-linux-i686.tar.bz2";
 			phantomJsExe = new File(installDir, "phantomjs-1.8.1-linux-i686/bin/phantomjs");
 		}
 
