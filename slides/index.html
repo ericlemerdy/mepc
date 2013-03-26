@@ -227,26 +227,77 @@ class tomcat-class {
           </dl>
         </section>
       </section>
+      <section data-state="slide">
+        <h2>Tutoriel Puppet 1/5</h2>
+        <h3>Lancer puppetmaster</h3>
+      </section>
       <section>
-        <section data-state="slide">
-          <h2>Tutoriel Puppet 1/5</h2>
-          <h3>Lancer puppetmaster</h3>
-        </section>
         <section data-state="slide">
           <h2>Tutoriel Puppet 2/5</h2>
           <h3>Créer un utilisateur et un groupe</h3>
         </section>
         <section data-state="slide">
-          <h2>Tutoriel Puppet 3/5</h2>
-          <h3>Installer un paquet</h3>
+          <pre><code class="ruby">
+class tomcat-class {
+  user {'mepc':
+    ensure => present,
+    uid => 1100,
+    gid => 'mepc',
+    home => '/home/mepc',
+    require => Group['mepc'],
+  }
+
+  group {'mepc':
+    ensure => present,
+    gid => 1100,
+  }
+}
+          </code></pre>
         </section>
+      </section>
+      <section>
         <section data-state="slide">
-          <h2>Tutoriel Puppet 4/5</h2>
+          <h2>Tutoriel Puppet 3/5</h2>
           <h3>Déployer un fichier</h3>
         </section>
         <section data-state="slide">
+          <pre><code class="ruby">
+file {'/home/mepc':
+  ensure => directory,
+  owner => mepc,
+  group => mepc,
+  mode => 755,
+}
+          </code></pre>
+        </section>
+      </section>
+      <section>
+        <section data-state="slide">
+          <h2>Tutoriel Puppet 4/5</h2>
+          <h3>Installer un paquet</h3>
+        </section>
+        <section data-state="slide">
+          <pre><code class="ruby">
+package {'apache2':
+  ensure => installed,
+}
+          </code></pre>
+        </section>
+      </section>
+      <section>
+        <section data-state="slide">
           <h2>Tutoriel Puppet 5/5</h2>
           <h3>Gestion d'un service</h3>
+        </section>
+        <section data-state="slide">
+          <pre><code class="ruby">
+service {'apache2':
+  ensure => running,
+  enable => true,
+  hasstatus => true,
+  hasrestart => true,
+}
+          </code></pre>
         </section>
       </section>
       <section>
