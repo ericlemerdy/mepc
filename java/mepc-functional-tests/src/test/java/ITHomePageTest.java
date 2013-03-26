@@ -1,10 +1,9 @@
 import static java.lang.Boolean.parseBoolean;
 import static java.lang.String.format;
 import static java.lang.System.getProperty;
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.fest.assertions.fluentlenium.FluentLeniumAssertions.assertThat;
 import static org.junit.Assume.assumeTrue;
-
-import java.util.concurrent.TimeUnit;
 
 import org.fest.assertions.Condition;
 import org.fluentlenium.adapter.IsolatedTest;
@@ -81,7 +80,7 @@ public class ITHomePageTest extends PhantomJsTest {
 	@Before
 	public void createWebTester() {
 		goTo(format("http://%s/", getAppHost()));
-		await().atMost(2000, TimeUnit.SECONDS).until(".soldier-name").areDisplayed();
+		await().atMost(2, SECONDS).until(".soldier-name").areDisplayed();
 	}
 
 	@Test
@@ -97,12 +96,12 @@ public class ITHomePageTest extends PhantomJsTest {
 	@Test
 	public void should_not_hire_chuck_norris() {
 		click("#hire-norris");
-		await().atMost(2000).until("#btn-dialog-hire-soldier").areDisplayed();
+		await().atMost(2, SECONDS).until("#btn-dialog-hire-soldier").areDisplayed();
 		click("#btn-dialog-hire-soldier");
-		await().atMost(2000).until(alertDisplayed());
+		await().atMost(2, SECONDS).until(alertDisplayed());
 		assertThat(findFirst("#hire-soldier-error-alert")).hasText("Forbidden : You can never hire chuck norris because chuck norris hired you...");
 		click("#btn-dialog-hire-soldier-cancel");
-		await().atMost(2000).until(dialogHidden());
+		await().atMost(2, SECONDS).until(dialogHidden());
 		assertThat(findFirst("#hire-norris")).isDisplayed();
 	}
 
@@ -111,16 +110,16 @@ public class ITHomePageTest extends PhantomJsTest {
 		assumeTrue(parseBoolean(getProperty("fr.valtech.dev", "false")));
 
 		click("#hire-lundgren");
-		await().atMost(2000).until("#btn-dialog-hire-soldier").areDisplayed();
+		await().atMost(2, SECONDS).until("#btn-dialog-hire-soldier").areDisplayed();
 		fill("#hire-form-code-name").with("Dolphy");
 		click("#btn-dialog-hire-soldier");
-		await().atMost(2000).until(dialogHidden());
+		await().atMost(2, SECONDS).until(dialogHidden());
 		assertLundgrenHired(this);
 
 		IsolatedTest lundgrenIsHiredForOtherClients = new IsolatedTest(getDriver());
 		Fluent otherClient = lundgrenIsHiredForOtherClients //
 				.goTo(format("http://%s/", getAppHost())) //
-				.await().atMost(2000, TimeUnit.SECONDS).until(".soldier-name").areDisplayed();
+				.await().atMost(2, SECONDS).until(".soldier-name").areDisplayed();
 		assertLundgrenHired(otherClient);
 		lundgrenIsHiredForOtherClients.quit();
 	}
