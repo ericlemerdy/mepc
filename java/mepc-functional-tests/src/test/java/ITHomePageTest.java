@@ -20,6 +20,7 @@ import org.openqa.selenium.WebDriver;
 import com.google.common.base.Predicate;
 
 public class ITHomePageTest extends PhantomJsTest {
+
 	private static Server server;
 
 	private static final Condition<FluentWebElement> HAS_CLASS(final String classname) {

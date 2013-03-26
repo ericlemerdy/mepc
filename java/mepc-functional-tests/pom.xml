@@ -84,6 +84,27 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <groupId>org.eclipse.jetty</groupId>
+        <artifactId>jetty-maven-plugin</artifactId>
+        <version>9.0.0.v20130308</version>
+        <configuration>
+          <webApp>
+            <contextPath>/void</contextPath>
+          </webApp>
+          <contextHandlers>
+            <contextHandler implementation="org.eclipse.jetty.webapp.WebAppContext">
+              <contextPath>/</contextPath>
+              <war>${project.build.directory}/dependency/mepc-static.war</war>
+            </contextHandler>
+            <contextHandler implementation="org.eclipse.jetty.webapp.WebAppContext">
+              <contextPath>/data</contextPath>
+              <war>${project.build.directory}/dependency/mepc-server.war</war>
+            </contextHandler>
+          </contextHandlers>
+          <scanIntervalSeconds>0</scanIntervalSeconds>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
   <profiles>
@@ -129,19 +150,6 @@
                   <goal>run-war</goal>
                 </goals>
                 <configuration>
-                  <webApp>
-                    <contextPath>/void</contextPath>
-                  </webApp>
-                  <contextHandlers>
-                    <contextHandler implementation="org.eclipse.jetty.webapp.WebAppContext">
-                      <contextPath>/</contextPath>
-                      <war>${project.build.directory}/dependency/mepc-static.war</war>
-                    </contextHandler>
-                    <contextHandler implementation="org.eclipse.jetty.webapp.WebAppContext">
-                      <contextPath>/data</contextPath>
-                      <war>${project.build.directory}/dependency/mepc-server.war</war>
-                    </contextHandler>
-                  </contextHandlers>
                   <scanIntervalSeconds>0</scanIntervalSeconds>
                   <daemon>true</daemon>
                 </configuration>
