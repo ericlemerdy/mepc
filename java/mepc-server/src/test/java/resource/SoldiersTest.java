@@ -11,40 +11,23 @@ import java.util.Map;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.classic.Session;
-import org.hsqldb.server.Server;
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import resources.Soldier;
 import resources.Soldiers;
 import resources.ThreeSoldiers;
-import server.SoldierServerModule;
+import server.SoldierServerHSQLDBModule;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.util.Modules;
 
 public class SoldiersTest {
 
-	private Injector injector = Guice.createInjector(new SoldierServerModule());
+	private Injector injector = Guice.createInjector(Modules.override(new SoldierServerHSQLDBModule()).with(new SoldierServerHSQLDBModule()));
 	private Soldiers soldierResources = null;
-	private static Server server;
-
-	@BeforeClass
-	public static void startHsqlDB() {
-		server = new Server();
-		server.setAddress("localhost");
-		server.setDatabaseName(0, "");
-		server.setDatabasePath(0, "file:target/test");
-		server.start();
-	}
-
-	@AfterClass
-	public static void stopHsqlDB() {
-		server.stop();
-	}
 
 	@Before
 	public void createTestSoldier() {
