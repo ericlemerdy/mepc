@@ -6,10 +6,20 @@ import subprocess
 import shutil
 import urllib
 import socket
+import time
 from jinja2 import Template
+from multiprocessing import Process
 
 class DeployScheduler():
-  def __init__(self):
+  def __init__(self, name):
+    hacfg_name = '/tmp/mepc/{}.cfg'.format(name)
+    with open('templates/files/haproxy.cfg', 'r') as conf_file:
+      tpl_content = conf_file.read()
+      ha_tpl = Template(tpl_content)
+      with open(hacfg_name, 'w') as hacfg_file:
+        hacfg_file.write(ha_tpl.render(team=name))
+    os.chmod(hacfg_name, 0644)
+    subprocess.call(['/usr/sbin/haproxy', '-D', '-f', hacfg_name])
     self.pipeline = ( self.package_app,
                       self.instantiate_infra,
                       self.functional_tests,
@@ -18,16 +28,14 @@ class DeployScheduler():
     self.redis = redis.Redis()
     teams = self.redis.hkeys('teams')
     teams.sort()
-    self.teams_servers = {}
-    for team in teams:
-      self.teams_servers[team] = {}
-      servers = self.redis.hkeys(team)
-      for server in servers:
-        url = self.redis.hmget(team, server)
-        env, role = server.split(':')
-        if not self.teams_servers[team].has_key(env):
-          self.teams_servers[team][env] = {}
-        self.teams_servers[team][env][role] = url[0]
+    self.servers = {}
+    servers = self.redis.hkeys(team)
+    for server in servers:
+      url = self.redis.hmget(team, server)
+      env, role = server.split(':')
+      if not self.servers.has_key(env):
+        self.servers[env] = {}
+      self.servers[env][role] = url[0]
     self.ps = redis.Redis().pubsub()
     self.ps.subscribe('deploy')
     with open('templates/files/Vagrantfile', 'r') as conf_file:
@@ -40,23 +48,27 @@ class DeployScheduler():
       self.steps[key] = value.split(':')
 
   def package_app(self, team):
-    tmp_dir = tempfile.mkdtemp(prefix=team)
-    os.chdir(tmp_dir)
-    status = subprocess.call(['git', 'clone', '/tmp/mepc/{}.git'.format(team)])
-    if status != 0:
-      return False
-    os.chdir('{}/java'.format(team))
-    status = subprocess.call(['mvn', 'clean', 'install'])
-    if status != 0:
-      return False
-    os.chdir('/tmp')
-    shutil.rmtree(tmp_dir)
-    return True
+    try:
+      tmp_dir = tempfile.mkdtemp(prefix=team)
+      os.chdir(tmp_dir)
+      status = subprocess.call(['git', 'clone', '/tmp/mepc/{}.git'.format(team)])
+      if status != 0:
+        return False
+      os.chdir('{}'.format(team))
+      status = subprocess.call(['mvn', 'clean', 'install', '-DskipTests=true'])
+      if status != 0:
+        return False
+      self.version = self.get_pom_version('mepc-server')
+      shutil.copy('mepc-server/target/mepc-server-{}.war'.format(self.version), '/tmp/mepc/web/{}'.format(team))
+      os.chdir('/tmp')
+      return True
+    finally:
+      shutil.rmtree(tmp_dir)
   
   def instantiate_infra(self, team):
     env_idx = int(self.redis.hget('teams', team)) % 2
     target_env = self.envs[env_idx]
-    servers = self.teams_servers[team][target_env]
+    servers = self.servers[target_env]
     dhcp_prefix = self.redis.hget('dhcp', team) + str(env_idx)
     for role, url in servers.items():
       role_idx = str(map(lambda x: x.lower(), self.roles).index(role))
@@ -71,20 +83,22 @@ class DeployScheduler():
     return True
   
   def functional_tests(self, team):
-    env_idx = int(self.redis.hget('teams', team)) % 2
-    target_env = self.envs[env_idx]
-    tmp_dir = tempfile.mkdtemp(prefix=team)
-    os.chdir(tmp_dir)
-    status = subprocess.call(['git', 'clone', '/tmp/mepc/{}.git'.format(team)])
-    if status != 0:
-      return False
-    os.chdir('{}/java'.format(team))
-    status = subprocess.call(['mvn', 'clean', 'install', ' -Dfr.valtech.appHost='])
-    if status != 0:
-      return False
-    os.chdir('/tmp')
-    shutil.rmtree(tmp_dir)
-    return True
+    try:
+      env_idx = int(self.redis.hget('teams', team)) % 2
+      target_env = self.envs[env_idx]
+      tmp_dir = tempfile.mkdtemp(prefix=team)
+      os.chdir(tmp_dir)
+      status = subprocess.call(['git', 'clone', '/tmp/mepc/{}.git'.format(team)])
+      if status != 0:
+        return False
+      os.chdir('{}/mepc-functional-tests'.format(team))
+      status = subprocess.call(['mvn', 'clean', 'install', ' -Dfr.valtech.appHost='])
+      if status != 0:
+        return False
+      os.chdir('/tmp')
+      return True
+    finally:
+      shutil.rmtree(tmp_dir)
   
   def switch_env(self, team):
     new_env = self.envs[int(self.redis.hget('teams', team)) % 2]
@@ -102,7 +116,7 @@ class DeployScheduler():
     return True
     
   def destroy_env(self, team, env):
-    servers = self.teams_servers[team][env]
+    servers = self.servers[env]
     for role, url in servers.items():
       print 'Destroying {role} on {url}'.format(role=role, url=url)
       resp = urllib.urlopen(url, urllib.urlencode({'action': 'destroy -f'}))
@@ -117,9 +131,13 @@ class DeployScheduler():
     sock.connect('/tmp/mepc/{team}.sock'.format(team=team))
     sock.send('{command}\n'.format(command=command))
   
+  def get_pom_version(self, project='.'):
+    with open('{}/target/maven-archiver/pom.properties'.format(project), 'r') as props:
+      for line in props:
+        if line.startswith('version='):
+          return line.strip().split('=')[-1]
+
   def start(self):
-    print 'Waiting for some commits to deploy :)'
-    print 'Press Ctrl-C to stop...'
     try:
       for message in self.ps.listen():
         if message['type'] == 'message':
@@ -129,11 +147,25 @@ class DeployScheduler():
             if not step(team):
               break
             successful_steps += 1
-    except KeyboardInterrupt:
-      print '\b\bbye !'
-
+    except:
+      import traceback
+      traceback.print_exc()
 
 if __name__ == '__main__':
-  sched = DeployScheduler()
-  sched.start()
-
+  conn = redis.Redis()
+  teams = conn.hkeys('teams')
+  processes = []
+  for team in teams:
+    scheduler = DeployScheduler(team)
+    process = Process(target=scheduler.start)
+    processes.append(process)
+    process.start()
+    print 'Listening for {} commits'.format(team)
+  try:
+    print 'Waiting for some commits to deploy :)'
+    print 'Press Ctrl-C to stop...'
+    while len(processes) > 0:
+      time.sleep(30)
+  except KeyboardInterrupt:
+    for process in processes:
+      process.terminate()
