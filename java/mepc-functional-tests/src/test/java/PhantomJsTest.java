@@ -1,4 +1,5 @@
 import static com.google.common.collect.ImmutableMap.of;
+import static java.lang.String.format;
 import static org.openqa.selenium.phantomjs.PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY;
 
 import java.io.File;
@@ -51,7 +52,7 @@ public abstract class PhantomJsTest extends FluentAdapter {
 		}
 
 		private File snapshotFile(Description description) {
-			return new File("snapshots", description.getMethodName() + ".png");
+			return new File("target", format("snapshots/%s.png", description.getMethodName()));
 		}
 
 		private WebDriver createDriver() {
