@@ -19,6 +19,7 @@ import resources.Soldier;
 import resources.Soldiers;
 import resources.ThreeSoldiers;
 import server.SoldierServerHSQLDBModule;
+import server.SoldierServerModule;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -26,7 +27,7 @@ import com.google.inject.util.Modules;
 
 public class SoldiersTest {
 
-	private Injector injector = Guice.createInjector(Modules.override(new SoldierServerHSQLDBModule()).with(new SoldierServerHSQLDBModule()));
+	private Injector injector = Guice.createInjector(Modules.override(new SoldierServerModule()).with(new SoldierServerHSQLDBModule()));
 	private Soldiers soldierResources = null;
 
 	@Before
