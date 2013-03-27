@@ -4,15 +4,13 @@
 Vagrant::Config.run do |config|
   config.vm.box = "mepc"
 
-#  config.vm.box_url = "http://127.0.0.1/mepc-lxc/ubuntu_quetzal.box"
+  config.vm.box_url = "http://filer/mepc.box"
   config.ssh.private_key_path = "mepc.pem"
   config.vm.network :bridged, :mac => '02000000{{ mac }}'
-  config.vm.provision :puppet, 
-                      :facter => {'fqdn' => '{{ fqdn }}'},
-                      :module_path => 'modules' do |puppet|
-    puppet.options = ["--templatedir","/vagrant/templates"]
-    puppet.manifests_path = "manifests"
-    puppet.manifest_file  = "sensu.pp"
-  end
+
+  config.vm.provision :puppet_server do |puppet|
+    puppet.puppet_server = '{{ puppetmaster }}'
+    puppet.puppet_node = '{{ fqdn }}'
+  end 
 
 end
