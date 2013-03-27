@@ -1,7 +1,7 @@
 {% include 'header.html' %}
 <h3>{{ teams|length }} équipe{% if teams|length > 1 %}s{% endif %} :</h3>
-  {% for team in teams %}
-      <h4>{{ team }}</h4>
+  {% for team, prefix in teams.iteritems() %}
+      <h4>{{ team }} - {{ prefix }}</h4>
       <div class="row">
     {% for env in srvs[team] %}
       <div class="span4">

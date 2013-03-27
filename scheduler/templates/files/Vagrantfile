@@ -8,9 +8,11 @@ Vagrant::Config.run do |config|
   config.ssh.private_key_path = "mepc.pem"
   config.vm.network :bridged, :mac => '02000000{{ mac }}'
 
-  config.vm.provision :puppet_server do |puppet|
-    puppet.puppet_server = '{{ puppetmaster }}'
-    puppet.puppet_node = '{{ fqdn }}'
-  end 
+  config.vm.host_name = '{{ fqdn }}'
 
+  config.vm.provision :puppet_server do |puppet|
+    puppet.puppet_server = '{{ puppetmaster }}.mepc.lan'
+    puppet.puppet_node = '{{ fqdn }}'
+    puppet.options = ["--verbose"]
+  end 
 end

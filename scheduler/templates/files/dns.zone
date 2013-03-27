@@ -11,10 +11,11 @@ $TTL  604800
 ;
 @     IN  NS  ns.mepc.lan.
 ns    IN  A   10.3.0.30
-filer IN  A   10.3.0.10
+filer IN  A   10.3.0.30
+mepc  IN  A   10.3.0.30
 monitoring  IN  A 10.3.0.20
 {% for team in teams %}
-logs.{{ team}} IN A 10.3.0.10
+logs.{{ team}} IN A 10.3.0.30
 {% endfor %}
 
 {% for server, ip in servers.iteritems() %}

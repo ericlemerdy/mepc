@@ -57,7 +57,7 @@ class DhcpConfig():
   
   def start(self):
     print 'Starting isc-dhcp'
-    subprocess.call(['/usr/sbin/dhcpd', '-f', '-cf', '/tmp/mepc/dhcp.cfg', 'vboxnet0'])
+    subprocess.call(['/usr/sbin/dhcpd', '-f', '-cf', '/tmp/mepc/dhcp.cfg', 'eth0'])
     print 'Stopping isc-dhcp'
     
 class DnsConfig():
@@ -66,9 +66,12 @@ class DnsConfig():
     dhcp_prefixes = redis_conn.hgetall('dhcp')
     self.dnscfg_name = '/tmp/mepc/db.mepc.lan'
     servers = {}
+    roles = map(lambda x: x.lower(), redis_conn.lrange('roles', 0, 99))
     for team, prefix in dhcp_prefixes.items():
+      if team == 'demo':
+        prefix = '00'
       for env in ('blue', 'green'):
-        for host_id, host in enumerate(('web', 'app', 'db', 'nosql')):
+        for host_id, host in enumerate(roles):
           servers['{team}-{env}-{host}'.format(team=team, env=env, host=host)] = '10.3.{prefix}.{host_id}'.format(prefix=int(prefix), host_id=host_id+1)
       servers['{team}-puppet'.format(team=team)] = '10.3.{prefix}.9'.format(prefix=int(prefix))
     with open('templates/files/dns.zone', 'r') as conf_file:
@@ -104,6 +107,7 @@ class HaproxyTeam():
 
 class DeployScheduler():
   def __init__(self, name):
+    self.run = 0
     self.team = team
     self.pipeline = ( self.package_app,
                       self.instantiate_infra,
@@ -143,7 +147,7 @@ class DeployScheduler():
       if status != 0:
         return False
       self.version = self.get_pom_version('mepc-server')
-      shutil.copy('mepc-server/target/mepc-server-{}.war'.format(self.version), '/tmp/mepc/web/{}'.format(self.team))
+      shutil.copy('mepc-server/target/mepc-server-{}.war'.format(self.version), '/home/pchaussalet/projects/mepc/filer/deploy/{}'.format(self.team))
       os.chdir('/tmp')
       return True
     finally:
@@ -158,7 +162,7 @@ class DeployScheduler():
     for role, url in servers.items():
       if role in current_roles:
         role_idx = str(map(lambda x: x.lower(), self.roles).index(role))
-        fqdn = '{env}-{role}'.format(env=target_env, role=role)
+        fqdn = '{team}-{env}-{role}'.format(team=self.team, env=target_env, role=role + str(self.run))
         vagrantfile = self.template.render(fqdn=fqdn, mac=dhcp_prefix+role_idx, puppetmaster='{}-puppet'.format(self.team))
         print 'Launching {role} ({fqdn}) on {url}'.format(role=role, fqdn=fqdn, url=url)
         resp = urllib.urlopen(url, urllib.urlencode({'config': vagrantfile, 'action': 'up'}))
@@ -214,12 +218,14 @@ class DeployScheduler():
     
   def destroy_env(self, env):
     servers = self.servers[env]
+    current_roles = self.steps[self.version.split('.')[0]]
     for role, url in servers.items():
-      print 'Destroying {role} on {url}'.format(role=role, url=url)
-      resp = urllib.urlopen(url, urllib.urlencode({'action': 'destroy -f'}))
-      if resp.getcode() > 399:
-        print resp.getcode()
-        return False
+      if role in current_roles:
+        print 'Destroying {role} on {url}'.format(role=role, url=url)
+        resp = urllib.urlopen(url, urllib.urlencode({'action': 'destroy -f'}))
+        if resp.getcode() > 399:
+          print resp.getcode()
+          return False
     return True
 
   def send_haproxy_cmd(self, command):
@@ -240,6 +246,8 @@ class DeployScheduler():
         if message['type'] == 'message':
           team = message['data']
           if team == self.team:
+            self.run += 1
+            print team
             self.logs = open('/tmp/mepc/logs/{}.log'.format(team), 'w')
             successful_steps = 0
             for step in self.pipeline:
