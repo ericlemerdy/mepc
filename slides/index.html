@@ -214,6 +214,48 @@ class tomcat-class {
             <li>VirtualBox</dt>
             <li>Vagrant</dt>
             <li>Vagrantfile</dt>
+            <li>Clef ssh: <code>mepc.pem</code></li>
+          </ul>
+        </section>
+        <section data-state="slide">
+          <h2>Installation</h2>
+          <p><a href="http://filer/" target="_blank">http://filer/</a></p>
+          <p>Antisèches :</p>
+          <dl>
+            <dt>Installer sous Debian / Ubuntu</dt>
+            <dd>dpkg -i [nom_du_package]</dd>
+          </dl>
+          <h3>Lancer la machine virtuelle</h3>
+          <p><code>chmod 600 mepc.pem</code></p>
+          <p><code>vagrant up</code></p>
+          <h3>C'est fini lorsque...</h3>
+          <p><code>vagrant ssh</code> vous connecte à la machine.</p>
+        </section>
+        <section data-state="slide">
+          <h3>Désinstaller la mepc</h3>
+          <p><code>vagrant box remove mepc</code>
+          <p><code>vagrant destroy</code></p>
+          <h3>Et ré-installer</h3>
+          <p><code>chmod 600 mepc.pem</code></p>
+          <p><code>vagrant up</code></p>
+          <h3>C'est fini lorsque...</h3>
+          <p><code>vagrant ssh</code> vous connecte à la machine.</p>
+        </section>
+      </section>
+      <section data-state="slide">
+        <h2>Rejoignez-nous !</h2>
+        <img src="assets/ethernet.jpg" />
+        <small>image &copy; <a href="http://mike.openphoto.net">Michael Jastremski</a> for <a href="http://5384.openphoto.net">openphoto.net</a> CC:Attribution-ShareAlike</small>
+      </section>
+      <section>
+        <section data-state="slide">
+          <h2>Installation</h2>
+          <p>Tout est là !</p>
+          <p><a href="http://filer/" target="_blank">http://filer/</a></p>
+          <ul>
+            <li>VirtualBox</dt>
+            <li>Vagrant</dt>
+            <li>Vagrantfile</dt>
             <li>Vagrant base box : <code>mepc.box</code></li>
           </ul>
         </section>
@@ -300,16 +342,7 @@ service {'apache2':
           </code></pre>
         </section>
       </section>
-      <section>
-        <section data-state="slide">
-          <h2>Constitution des équipes 1/3</h2>
-          <p class="fragment">
-            <img src="assets/data-center.jpg" />
-            <small>Photo credit: <a href="http://www.flickr.com/photos/arthur-caranta/2925352521/">Arthur40A</a> / <a href="http://foter.com">Foter.com</a> / <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC BY-SA</a></small>
-          </p>
-          <p class="fragment">Une équipe = un data center !</p>
-        </section>
-        <section data-state="slide">
+       <section data-state="slide">
           <h2>Constitution des équipes 2/3</h2>
           <p>Une équipe, c'est au total :</p>
           <ul>
@@ -336,7 +369,6 @@ service {'apache2':
             <li>mongo-blue-4</li>
             <li>mongo-green-4</li>
           </ul>
-        </section>
       </section>
       <section data-state="intermede">
         <h2>Démonstration de la première mise en production</h2>
