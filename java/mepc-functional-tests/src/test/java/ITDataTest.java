@@ -16,33 +16,15 @@ import static org.junit.Assume.assumeTrue;
 import java.net.URL;
 import java.util.List;
 
-import org.hsqldb.server.Server;
-import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.google.common.base.Charsets;
 
-public class ITDataTest {
-
-	private static Server server;
+public class ITDataTest extends WithTestData {
 
 	private String getAppHost() {
 		return getProperty("fr.valtech.appHost");
-	}
-
-	@BeforeClass
-	public static void startHsqlDB() {
-		server = new Server();
-		server.setAddress("localhost");
-		server.setDatabaseName(0, "");
-		server.setDatabasePath(0, "file:target/test");
-		server.start();
-	}
-
-	@AfterClass
-	public static void stopHsqlDB() {
-		server.stop();
 	}
 
 	@BeforeClass
@@ -55,9 +37,9 @@ public class ITDataTest {
 	@Test
 	public void should_get_soldiers() throws Exception {
 		expect().content("soldiers.soldiers.id", contains( //
-				contains((Object) "stallone", "statham", "li"), //
-				contains((Object) "lundgren", "norris", "van-damme"), //
-				contains((Object) "willis", "schwarzenegger") //
+				contains((Object) "li", "lundgren", "norris"), //
+				contains((Object) "schwarzenegger", "stallone", "statham"), //
+				contains((Object) "van-damme", "willis") //
 				)).when().get(format("http://%s/data/soldiers.json", getAppHost()));
 	}
 
@@ -71,9 +53,9 @@ public class ITDataTest {
 	@Test
 	public void soldier_should_have_some_attributes() throws Exception {
 		expect().root("soldiers.soldiers[0][0]")//
-				.content("id", equalTo("stallone")).and() //
-				.content("name", equalTo("Sylvester Stallone")) //
-				.content("description", equalTo("This ex-boxer is a vietnâm veteran that really had a rough.")).and() //
+				.content("id", equalTo("li")).and() //
+				.content("name", equalTo("Jet Li")) //
+				.content("description", equalTo("Do not be fooled by its size, this man can send you to the mat quickly thanks to its speed.")).and() //
 				.content("hired", notNullValue()).and() //
 				.content("codeName", nullValue()).and() //
 				.when().get(format("http://%s/data/soldiers.json", getAppHost()));
@@ -94,7 +76,7 @@ public class ITDataTest {
 
 		final String hireURL = format("http://%s/data/hire/statham?codeName=polka", getAppHost());
 		expect().statusCode(SC_OK).when().post(hireURL);
-		expect().root("soldiers.soldiers[0][1]") //
+		expect().root("soldiers.soldiers[1][2]") //
 				.body("hired", equalTo(true)) //
 				.content("codeName", equalTo("polka")) //
 				.when().get("http://{appHost}/data/soldiers.json", getAppHost());

@@ -33,6 +33,7 @@ public class SoldiersTest {
 	public void createTestSoldier() {
 		soldierResources = injector.getInstance(Soldiers.class);
 		Session session = injector.getInstance(SessionFactory.class).openSession();
+
 		try {
 			Transaction transaction = session.beginTransaction();
 			transaction.begin();

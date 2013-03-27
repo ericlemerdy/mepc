@@ -5,11 +5,12 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.fest.assertions.fluentlenium.FluentLeniumAssertions.assertThat;
 import static org.junit.Assume.assumeTrue;
 
+import java.sql.SQLException;
+
 import org.fest.assertions.Condition;
 import org.fluentlenium.adapter.IsolatedTest;
 import org.fluentlenium.core.Fluent;
 import org.fluentlenium.core.domain.FluentWebElement;
-import org.hsqldb.Server;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -19,8 +20,6 @@ import org.openqa.selenium.WebDriver;
 import com.google.common.base.Predicate;
 
 public class ITHomePageTest extends PhantomJsTest {
-
-	private static Server server;
 
 	private static final Condition<FluentWebElement> HAS_CLASS(final String classname) {
 		return new Condition<FluentWebElement>("has class " + classname) {
@@ -32,17 +31,13 @@ public class ITHomePageTest extends PhantomJsTest {
 	};
 
 	@BeforeClass
-	public static void startHsqlDB() {
-		server = new Server();
-		server.setAddress("localhost");
-		server.setDatabaseName(0, "");
-		server.setDatabasePath(0, "file:target/test");
-		server.start();
+	public static void initDb() throws SQLException {
+		WithTestData.initDb();
 	}
 
 	@AfterClass
-	public static void stopHsqlDB() {
-		server.stop();
+	public static void emptyDb() throws SQLException {
+		WithTestData.emptyDb();
 	}
 
 	private static final Condition<FluentWebElement> DISABLED = HAS_CLASS("disabled");

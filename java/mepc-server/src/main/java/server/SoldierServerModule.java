@@ -44,14 +44,14 @@ public class SoldierServerModule extends JerseyServletModule {
 	@Singleton
 	public SessionFactory createSessionFactory() {
 		return new AnnotationConfiguration() //
-				.setProperty(DRIVER, "org.hsqldb.jdbcDriver") //
-				.setProperty(URL, "jdbc:hsqldb:hsql://localhost") //
-				.setProperty(USER, "sa") //
-				.setProperty(PASS, "") //
+				.setProperty(DRIVER, "com.mysql.jdbc.Driver") //
+				.setProperty(URL, "jdbc:mysql://localhost/mepcdata") //
+				.setProperty(USER, "root") //
+				.setProperty(PASS, "root") //
 				.setProperty(POOL_SIZE, "1") //
-				.setProperty(DIALECT, "org.hibernate.dialect.HSQLDialect") //
+				.setProperty(DIALECT, "org.hibernate.dialect.MySQL5Dialect") //
 				.setProperty(SHOW_SQL, "true") //
-				.setProperty(HBM2DDL_AUTO, "create") //
+				.setProperty(HBM2DDL_AUTO, "update") //
 				.addAnnotatedClass(resources.Soldier.class) //
 				.buildSessionFactory();
 	}
