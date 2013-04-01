@@ -1,4 +1,0 @@
-vcl.load blue /etc/varnish/blue.vcl
-vcl.load green /etc/varnish/green.vcl
-vcl.use blue
-vcl.discard boot
