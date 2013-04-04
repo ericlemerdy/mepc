@@ -41,7 +41,7 @@ class DhcpConfig():
         ( 'default-lease-time 120;',
           'max-lease-time 600;',
           'option subnet-mask 255.255.0.0;',
-          'option domain-name-servers 10.3.0.30;',
+          'option domain-name-servers 10.3.0.20;',
           'option domain-name "mepc.lan";',
           'subnet 10.3.0.0 netmask 255.255.0.0 {',
           '  range 10.3.100.1 10.3.100.254;',

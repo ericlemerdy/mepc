@@ -10,12 +10,12 @@ $TTL  604800
        604800 ) ; Negative Cache TTL
 ;
 @     IN  NS  ns.mepc.lan.
-ns    IN  A   10.3.0.30
+ns    IN  A   10.3.0.20
 filer IN  A   10.3.0.30
-mepc  IN  A   10.3.0.30
-monitoring  IN  A 10.3.0.20
+mepc  IN  A   10.3.0.20
+monitoring  IN  A 10.3.0.40
 {% for team in teams %}
-logs.{{ team}} IN A 10.3.0.30
+logs.{{ team}} IN A 10.3.0.20
 {% endfor %}
 
 {% for server, ip in servers.iteritems() %}
