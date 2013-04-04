@@ -1,0 +1,14 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant::Config.run do |config|
+  config.vm.box = "precise64"
+  config.vm.box_url = "http://files.chaussalet.net/mepc.box"
+
+  config.vm.network :hostonly, "10.3.0.30"
+
+  config.vm.provision :puppet do |puppet|
+    puppet.manifests_path = "."
+    puppet.manifest_file  = "filer.pp"
+  end
+end
