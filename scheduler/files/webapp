@@ -1,0 +1,48 @@
+#!/bin/bash
+DESC="MEPC webapp"
+PIDFILE=/var/run/webapp.pid
+APPDIR=/opt/mepc
+VENV=$APPDIR/venv
+PATH=$VENV/bin:$PATH
+
+DAEMON=$VENV/bin/uwsgi
+DAEMON_ARGS="--pidfile $PIDFILE --vacuum --no-orphan --http :9090 --virtualenv venv --wsgi-file webapp.py --callable app --enable-threads --process 4 --threads 2 --master --daemonize /var/log/webapp.log --catch-exceptions --log-5xx"
+STOP_ARGS="--stop $PIDFILE"
+
+case "$1" in
+  start)
+    echo -n "Starting $DESC..."
+    if start-stop-daemon --start --quiet --pidfile $PIDFILE --chdir $APPDIR --exec $DAEMON -- $DAEMON_ARGS
+    then
+      echo "DONE"
+      curl -o /dev/null http://localhost:9090/
+    else
+      echo "FAILED"
+    fi
+    ;;
+  stop)
+    echo -n "Stopping $DESC..."
+    if $DAEMON $STOP_ARGS
+    then
+      echo "DONE"
+    else
+      echo "FAILED"
+    fi
+    ;;
+  restart)
+    $0 stop
+    sleep 3
+    $0 start
+    ;;
+  status)
+    echo -n "$DESC is "
+    if start-stop-daemon --status --quiet --pidfile $PIDFILE
+    then
+      echo "running"
+    else
+      echo "not running"
+      exit 1
+    fi
+    ;;
+esac
+exit 0

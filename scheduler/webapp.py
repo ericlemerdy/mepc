@@ -16,8 +16,10 @@ redis.delete('roles')
 redis.delete('envs')
 redis.delete('steps')
 
-redis.lpush('roles', 'Application', 'SGBDR', 'Web', 'NoSQL')
-redis.lpush('envs', 'Blue', 'Green')
+for role in ('Application', 'SGBDR', 'Web', 'NoSQL'):
+  redis.rpush('roles', role)
+for env in ('Blue', 'Green'):
+  redis.rpush('envs', env)
 
 redis.hmset('steps', {'1': 'application'})
 redis.hmset('steps', {'2': 'application'})
@@ -26,18 +28,17 @@ redis.hmset('steps', {'4': 'application:web:sgbdr'})
 redis.hmset('steps', {'5': 'application:web:sgbdr:nosql'})
 redis.hmset('steps', {'6': 'application:web:nosql'})
 
-if os.path.exists('/home/pchaussalet/projects/mepc/filer/deploy'):
-  shutil.rmtree('/home/pchaussalet/projects/mepc/filer/deploy')
-os.mkdir('/home/pchaussalet/projects/mepc/filer/deploy')
-os.chmod('/home/pchaussalet/projects/mepc/filer/deploy', 0777)
-if os.path.exists('/tmp/mepc'):
-  shutil.rmtree('/tmp/mepc')
-os.mkdir('/tmp/mepc')
-os.chmod('/tmp/mepc', 0777)
-os.mkdir('/tmp/mepc/web')
-os.chmod('/tmp/mepc/web', 0777)
-os.mkdir('/tmp/mepc/logs')
-os.chmod('/tmp/mepc/logs', 0777)
+WORKDIR = '/var/lib/mepc'
+
+def ensure_dir(path):
+  if os.path.exists(path):
+    shutil.rmtree(path)
+  os.mkdir(path)
+  os.chmod(path, 0777)
+
+ensure_dir(WORKDIR+'/deploy')
+ensure_dir(WORKDIR+'/logs')
+ensure_dir(WORKDIR+'/repos')
 
 demo_srv = {
 'green_nosql_ip':         '10.3.100.2',
@@ -58,49 +59,32 @@ demo_srv = {
 'blue_application_port':  '9998'
 }
 
-#demo_srv = {
-#'green_nosql_ip':         '127.0.0.1',
-#'green_nosql_port':       '9991',
-#'green_web_ip':           '127.0.0.1',
-#'green_web_port':         '9992',
-#'green_sgbdr_ip':         '127.0.0.1',
-#'green_sgbdr_port':       '9993',
-#'green_application_ip':   '127.0.0.1',
-#'green_application_port': '9994',
-#'blue_nosql_ip':          '127.0.0.1',
-#'blue_nosql_port':        '9995',
-#'blue_web_ip':            '127.0.0.1',
-#'blue_web_port':          '9996',
-#'blue_sgbdr_ip':          '127.0.0.1',
-#'blue_sgbdr_port':        '9997',
-#'blue_application_ip':    '127.0.0.1',
-#'blue_application_port':  '9998'
-#}
-
 @app.route('/')
 def index():
-  teams = redis.hgetall('dhcp')
-  print teams
-  if 'demo' not in teams.keys():
-    init_team('demo')
-    servers = redis.lrange('roles', 0, 99)
-    envs = redis.lrange('envs', 0, 99)
-    init_members(servers, envs, 'demo', demo_srv)
+  try:
     teams = redis.hgetall('dhcp')
-  teams_servers = {}
-  for team in teams.keys():
-    teams_servers[team] = {}
-    servers = redis.hkeys(team)
-    for server in servers:
-      url = redis.hmget(team, server)
-      env, role = server.split(':')
-      if not teams_servers[team].has_key(env):
-        teams_servers[team][env] = {}
-      teams_servers[team][env][role] = url[0]
-  return render_template('display_teams.html', title=u'Liste des équipes', teams=teams, srvs=teams_servers)
+    if 'demo' not in teams.keys():
+      init_team('demo')
+      servers = redis.lrange('roles', 0, 99)
+      envs = redis.lrange('envs', 0, 99)
+      init_members(servers, envs, 'demo', demo_srv)
+      teams = redis.hgetall('dhcp')
+    teams_servers = {}
+    for team in teams.keys():
+      teams_servers[team] = {}
+      servers = redis.hkeys(team)
+      for server in servers:
+        url = redis.hmget(team, server)
+        env, role = server.split(':')
+        if not teams_servers[team].has_key(env):
+          teams_servers[team][env] = {}
+        teams_servers[team][env][role] = url[0]
+    return render_template('display_teams.html', title=u'Liste des équipes', teams=teams, srvs=teams_servers)
+  except Exception as e:
+    print e
 
 def init_team(name):
-  repo_dir = '/tmp/mepc/{}.git'.format(name)
+  repo_dir = WORKDIR+'/repos/{}.git'.format(name)
   os.mkdir(repo_dir)
   Repo.init_bare(repo_dir)
   for r, d, f in os.walk(repo_dir):
@@ -109,7 +93,7 @@ def init_team(name):
   with open(hook_name, 'w') as hook_file:
     hook_file.write(render_template('files/post-receive.py', team=name))
   os.chmod(hook_name, 0755)
-  deploy_dir = '/home/pchaussalet/projects/mepc/filer/deploy/{}'.format(name)
+  deploy_dir = WORKDIR+'/deploy/{}'.format(name)
   os.mkdir(deploy_dir)
   os.chmod(deploy_dir, 0777)
   if name == 'demo':

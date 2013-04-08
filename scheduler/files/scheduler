@@ -1,0 +1,49 @@
+#!/bin/bash
+DESC="MEPC scheduler"
+PIDFILE=/var/run/scheduler.pid
+APPDIR=/opt/mepc
+VENV=$APPDIR/venv
+PATH=$VENV/bin:$PATH
+
+DAEMON=$VENV/bin/uwsgi
+DAEMON_ARGS="--pidfile $PIDFILE --vacuum --no-orphan --http :3030 --virtualenv venv --mule=backend/dhcp.py --mule=backend/dns.py --mule=backend/haproxy.py --mule=backend/nginx.py --mule=backend/scheduler.py --enable-threads --master --daemonize /var/log/scheduler.log"
+STOP_ARGS="--stop $PIDFILE"
+
+git daemon --reuseaddr --base-path=/var/lib/mepc/repos --export-all --verbose --enable=receive-pack --detach
+
+case "$1" in
+  start)
+    echo -n "Starting $DESC..."
+    if start-stop-daemon --start --quiet --pidfile $PIDFILE --chdir $APPDIR --exec $DAEMON -- $DAEMON_ARGS
+    then
+      echo "DONE"
+    else
+      echo "FAILED"
+    fi
+    ;;
+  stop)
+    echo -n "Stopping $DESC..."
+    if $DAEMON $STOP_ARGS
+    then
+      echo "DONE"
+    else
+      echo "FAILED"
+    fi
+    ;;
+  restart)
+    $0 stop
+    sleep 3
+    $0 start
+    ;;
+  status)
+    echo -n "$DESC is "
+    if start-stop-daemon --status --quiet --pidfile $PIDFILE
+    then
+      echo "running"
+    else
+      echo "not running"
+      exit 1
+    fi
+    ;;
+esac
+exit 0

@@ -9,104 +9,14 @@ import socket
 import time
 from jinja2 import Template
 from multiprocessing import Process
+from uwsgidecorators import thread
+import uwsgi
+import signal
 
-class NginxConfig():
-  def __init__(self, teams):
-    self.teams = teams
-    redis_conn = redis.Redis()
-    ports = {}
-    for team in teams:
-      dhcp_prefix = redis_conn.hget('dhcp', team)
-      ports[team] = '80{}'.format(dhcp_prefix)
-    with open('templates/files/nginx.cfg', 'r') as conf_file:
-      tpl_content = conf_file.read()
-      nginx_tpl = Template(tpl_content)
-      self.nginxcfg_name = '/tmp/mepc/nginx.cfg'
-      with open(self.nginxcfg_name, 'w') as nginxcfg_file:
-        nginxcfg_file.write(nginx_tpl.render(teams=ports))
-      
-  def start(self):
-    print 'Starting nginx'
-    subprocess.call(['/usr/sbin/nginx', '-c', self.nginxcfg_name])
-    print 'Stopping nginx'
-
-class DhcpConfig():
-  def __init__(self, teams):
-    self.teams = teams
-    redis_conn = redis.Redis()
-    dhcp_prefixes = redis_conn.hgetall('dhcp')
-    self.dhcpcfg_name = '/tmp/mepc/dhcp.cfg'
-    with open(self.dhcpcfg_name, 'w') as dhcpcfg_file:
-      dhcpcfg_file.write('\n'.join(
-        ( 'default-lease-time 120;',
-          'max-lease-time 600;',
-          'option subnet-mask 255.255.0.0;',
-          'option domain-name-servers 10.3.0.20;',
-          'option domain-name "mepc.lan";',
-          'subnet 10.3.0.0 netmask 255.255.0.0 {',
-          '  range 10.3.100.1 10.3.100.254;',
-          '}')))
-      for team, prefix in dhcp_prefixes.items():
-        for env in ('blue', 'green'):
-          for host_id, host in enumerate(('web', 'app', 'db', 'nosql')):
-            dhcpcfg_file.write('\n'.join(
-              ( 'host {host} {{',
-                '  hardware ethernet 02:00:00:00:{prefix}:{host_id:0>2};',
-                '  fixed-address 10.3.{prefix}.{host_id};',
-                '}}')).format(host='{team}-{env}-{host}'.format(team=team, env=env, host=host), prefix=prefix, host_id=host_id+1))
-  
-  def start(self):
-    print 'Starting isc-dhcp'
-    subprocess.call(['/usr/sbin/dhcpd', '-f', '-cf', '/tmp/mepc/dhcp.cfg', 'eth0'])
-    print 'Stopping isc-dhcp'
-    
-class DnsConfig():
-  def __init__(self, teams):
-    redis_conn = redis.Redis()
-    dhcp_prefixes = redis_conn.hgetall('dhcp')
-    self.dnscfg_name = '/tmp/mepc/db.mepc.lan'
-    servers = {}
-    roles = map(lambda x: x.lower(), redis_conn.lrange('roles', 0, 99))
-    for team, prefix in dhcp_prefixes.items():
-      if team == 'demo':
-        prefix = '00'
-      for env in ('blue', 'green'):
-        for host_id, host in enumerate(roles):
-          servers['{team}-{env}-{host}'.format(team=team, env=env, host=host)] = '10.3.{prefix}.{host_id}'.format(prefix=int(prefix), host_id=host_id+1)
-      servers['{team}-puppet'.format(team=team)] = '10.3.{prefix}.9'.format(prefix=int(prefix))
-    with open('templates/files/dns.zone', 'r') as conf_file:
-      tpl_content = conf_file.read()
-      dns_tpl = Template(tpl_content)
-      dnscfg_name = '/tmp/mepc/db.mepc.lan'
-      with open(dnscfg_name, 'w') as dnscfg_file:
-        dnscfg_file.write(dns_tpl.render(servers=servers, teams=teams))
-  
-  def start(self):
-    print 'Starting named'
-    subprocess.call(['/usr/sbin/named', '-f'])
-    print 'Stopping named'
-    
-
-class HaproxyTeam():
-  def __init__(self, team):
-    self.team = team
-    redis_conn = redis.Redis()
-    self.dhcp_prefix = redis_conn.hget('dhcp', self.team)
-    with open('templates/files/haproxy.cfg', 'r') as conf_file:
-      tpl_content = conf_file.read()
-      ha_tpl = Template(tpl_content)
-      self.hacfg_name = '/tmp/mepc/{}.cfg'.format(team)
-      with open(self.hacfg_name, 'w') as hacfg_file:
-        hacfg_file.write(ha_tpl.render(team=team, team_idx=self.dhcp_prefix))
-    os.chmod(self.hacfg_name, 0644)
-
-  def start(self):
-    print 'Starting {} haproxy'.format(self.team)
-    subprocess.call(['/usr/sbin/haproxy', '-f', self.hacfg_name])
-    print 'Stopping {} haproxy'.format(team)
+WORKDIR = '/var/lib/mepc'
 
 class DeployScheduler():
-  def __init__(self, name):
+  def __init__(self, team):
     self.run = 0
     self.team = team
     self.pipeline = ( self.package_app,
@@ -139,7 +49,7 @@ class DeployScheduler():
     try:
       tmp_dir = tempfile.mkdtemp(prefix=self.team)
       os.chdir(tmp_dir)
-      status = subprocess.call(['git', 'clone', '/tmp/mepc/{}.git'.format(self.team)], stderr=self.logs, stdout=self.logs)
+      status = subprocess.call(['git', 'clone', WORKDIR+'/repos/{}.git'.format(self.team)], stderr=self.logs, stdout=self.logs)
       if status != 0:
         return False
       os.chdir('{}'.format(self.team))
@@ -147,7 +57,7 @@ class DeployScheduler():
       if status != 0:
         return False
       self.version = self.get_pom_version('mepc-server')
-      shutil.copy('mepc-server/target/mepc-server-{}.war'.format(self.version), '/home/pchaussalet/projects/mepc/filer/deploy/{}'.format(self.team))
+      shutil.copy('mepc-server/target/mepc-server-{}.war'.format(self.version), WORKDIR+'/deploy/{}'.format(self.team))
       os.chdir('/tmp')
       return True
     finally:
@@ -188,7 +98,7 @@ class DeployScheduler():
       target_env = self.envs[env_idx]
       tmp_dir = tempfile.mkdtemp(prefix=self.team)
       os.chdir(tmp_dir)
-      status = subprocess.call(['git', 'clone', '/tmp/mepc/{}.git'.format(self.team)])
+      status = subprocess.call(['git', 'clone', WORKDIR+'/repos/{}.git'.format(self.team)])
       if status != 0:
         return False
       os.chdir('{}/mepc-functional-tests'.format(self.team))
@@ -230,7 +140,7 @@ class DeployScheduler():
 
   def send_haproxy_cmd(self, command):
     sock = socket.socket(socket.AF_UNIX)
-    sock.connect('/tmp/mepc/{team}.sock'.format(team=self.team))
+    sock.connect(WORKDIR+'/{team}.sock'.format(team=self.team))
     sock.send('{command}\n'.format(command=command))
   
   def get_pom_version(self, project='.'):
@@ -248,7 +158,7 @@ class DeployScheduler():
           if team == self.team:
             self.run += 1
             print team
-            self.logs = open('/tmp/mepc/logs/{}.log'.format(team), 'w')
+            self.logs = open(WORKDIR+'/logs/{}.log'.format(team), 'w')
             successful_steps = 0
             for step in self.pipeline:
               if not step():
@@ -258,34 +168,4 @@ class DeployScheduler():
       import traceback
       traceback.print_exc()
 
-def start_service(service, is_global, arg):
-  service_inst = service(arg)
-  proc = Process(target=service_inst.start)
-  if is_global:
-    team = 'global'
-  else:
-    team = arg
-  processes[team].append(proc)
-  proc.start()
-
-if __name__ == '__main__':
-  conn = redis.Redis()
-  teams = conn.hkeys('teams')
-  processes = {'global': []}
-  if not os.path.exists('/tmp/mepc/logs'):
-    os.mkdir('/tmp/mepc/logs')
-  for team in teams:
-    processes[team] = []
-    for service in (HaproxyTeam, DeployScheduler):
-      start_service(service, False, team)
-
-  start_service(NginxConfig, True, teams)
-  start_service(DhcpConfig, True, teams)
-  start_service(DnsConfig, True, teams)
-  try:
-    print 'Press Ctrl-C to stop...'
-    while len(processes) > 0:
-      time.sleep(30)
-  except KeyboardInterrupt:
-    for process in processes.values():
-      map(lambda x: x.terminate(), process)
+DeployScheduler('demo').start()
